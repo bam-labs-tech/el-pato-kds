@@ -59,33 +59,10 @@
         }
 
         @media print {
-            body {
-                background: #fff !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: visible !important;
-                height: auto !important;
-            }
-
-            #loginScreen,
-            #kdsApp {
-                display: none !important;
-            }
-
-            #printFrame {
-                display: block !important;
-                width: 80mm;
-                margin: 0;
-                padding: 0;
-                font-family: 'Courier New', Courier, monospace !important;
-                color: #000 !important;
-                position: relative !important;
-            }
-
-            @page {
-                margin: 0;
-                size: auto;
-            }
+            html, body { min-height: 0 !important; height: auto !important; overflow: visible !important; background: #fff !important; margin: 0 !important; padding: 0 !important; }
+            #loginScreen, #kdsApp { display: none !important; }
+            #printFrame { display: block !important; position: static !important; width: 80mm; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace !important; color: #000 !important; }
+            @page { margin: 0; size: auto; }
         }
 
         @keyframes slideIn {
@@ -102,7 +79,7 @@
     </style>
 </head>
 
-<body class="bg-zinc-950 min-h-screen flex flex-col relative w-full overflow-hidden">
+<body class="bg-zinc-950 min-h-[100dvh] flex flex-col relative w-full">
 
     <!-- ═══ LOCK SCREEN (LOGIN) ═══ -->
     <div id="loginScreen"
@@ -122,7 +99,7 @@
     </div>
 
     <!-- ═══ KDS APP ═══ -->
-    <div id="kdsApp" class="hidden flex-1 flex-col w-full h-screen overflow-hidden">
+    <div id="kdsApp" class="hidden flex-1 flex-col w-full h-[100dvh]">
 
         <!-- ═══ KDS HEADER ═══ -->
         <header
@@ -179,7 +156,7 @@
         </header>
 
         <!-- ═══ MAIN BOARD ═══ -->
-        <main class="flex-1 p-6 overflow-y-auto w-full relative">
+        <main class="flex-1 p-6 overflow-y-auto overscroll-y-contain w-full relative" style="-webkit-overflow-scrolling: touch;">
             <div id="ticketsContainer"
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start pb-32 w-full relative z-10">
                 <!-- Loader State -->
