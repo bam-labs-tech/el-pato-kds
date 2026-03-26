@@ -156,7 +156,8 @@
         </header>
 
         <!-- ═══ MAIN BOARD ═══ -->
-        <main class="flex-1 p-6 overflow-y-auto overscroll-y-contain w-full relative" style="-webkit-overflow-scrolling: touch;">
+        <main id="mainScroll" class="flex-1 p-6 overflow-y-auto overscroll-y-contain w-full relative" style="-webkit-overflow-scrolling: touch;">
+            <div id="pullToRefresh" class="absolute top-0 left-0 w-full flex justify-center items-center h-16 -mt-16 transition-opacity opacity-0 text-zinc-500 font-bold text-sm gap-2 z-0"><span class="animate-spin text-xl">↻</span> Recargando...</div>
             <div id="ticketsContainer"
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start pb-32 w-full relative z-10">
                 <!-- Loader State -->
@@ -646,6 +647,60 @@
                     if (frameToRemove) frameToRemove.remove();
                 }, 3000);
             }, 300);
+        }
+        
+        // --- MOTOR DE TOUCH EVENTS (PULL TO REFRESH INTELIGENTE) ---
+        const mainEl = document.getElementById('mainScroll');
+        const ticketsContainer = document.getElementById('ticketsContainer');
+        const ptrIndicator = document.getElementById('pullToRefresh');
+        let startY = 0;
+        let isPulling = false;
+
+        if (mainEl && ticketsContainer) {
+            mainEl.addEventListener('touchstart', (e) => {
+                if (mainEl.scrollTop === 0) {
+                    startY = e.touches[0].clientY;
+                    isPulling = true;
+                    ticketsContainer.style.transition = 'none'; // Quitar transición para arrastre suave
+                }
+            }, { passive: true });
+
+            mainEl.addEventListener('touchmove', (e) => {
+                if (!isPulling) return;
+                
+                const currentY = e.touches[0].clientY;
+                const pullDistance = currentY - startY;
+
+                // Solo actuamos si el usuario hace swipe hacia abajo y está en el tope
+                if (pullDistance > 0 && mainEl.scrollTop === 0) {
+                    if(e.cancelable) e.preventDefault(); // Bloquear intento nativo rebelde
+                    // Resistencia elástica: jalamos hasta un máximo aparente (ej. 80px) simulando tensión
+                    const resistDistance = Math.min(pullDistance * 0.4, 80);
+                    
+                    ticketsContainer.style.transform = `translateY(${resistDistance}px)`;
+                    ptrIndicator.style.opacity = Math.min(pullDistance / 65, 1);
+                }
+            }, { passive: false }); // false es preventDefault-ready
+
+            mainEl.addEventListener('touchend', (e) => {
+                if (!isPulling) return;
+                isPulling = false;
+                
+                const endY = e.changedTouches[0].clientY;
+                const pullDistance = endY - startY;
+
+                ticketsContainer.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+                
+                if (pullDistance > 65 && mainEl.scrollTop === 0) {
+                    // Acción superó el umbral, procedemos a recargar
+                    ptrIndicator.innerHTML = '<span class="animate-spin text-xl text-amber-500">↻</span> Actualizando KDS...';
+                    window.location.reload();
+                } else {
+                    // No superó el umbral, revertir
+                    ticketsContainer.style.transform = 'translateY(0px)';
+                    ptrIndicator.style.opacity = 0;
+                }
+            });
         }
 
     </script>
