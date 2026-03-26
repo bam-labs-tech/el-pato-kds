@@ -601,21 +601,14 @@
             
             setTimeout(() => {
                 window.print();
-                
-                // Cleanup para no sobrecargar el navegador de frames invisibles
-                window.onafterprint = function() {
-                    const frameToRemove = document.getElementById('printFrame');
-                    if(frameToRemove) frameToRemove.remove();
-                    window.onafterprint = null;
-                };
-                
-                // Fallback cleanup en caso de que onafterprint falle o no sea soportado
-                setTimeout(() => {
-                    const frameToRemove = document.getElementById('printFrame');
-                    if(frameToRemove) frameToRemove.remove();
-                }, 3000);
-            }, 300);
+            }, 50);
         }
+
+        // Global Event Listener para Limpiar el Ticket Impreso (Mobile & Desktop Safe)
+        window.addEventListener('afterprint', () => {
+            const oldFrame = document.getElementById('printFrame');
+            if (oldFrame) oldFrame.remove();
+        });
 
     </script>
 </body>
