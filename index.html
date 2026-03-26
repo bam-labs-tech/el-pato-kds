@@ -201,7 +201,8 @@
 
         function verifyPin() {
             const pin = document.getElementById('pinInput').value;
-            if (pin === KITCHEN_PIN) {
+            console.log('PIN ingresado:', pin);
+            if (String(pin).trim() === KITCHEN_PIN) {
                 sessionStorage.setItem('kdsAuth', 'true');
                 unlockApp();
             } else {
@@ -211,33 +212,42 @@
         }
 
         function unlockApp() {
+            // 1. Mostrar la interfaz (Visibility Logic) forzando inline styles
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('kdsApp').style.display = 'flex';
+            
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('flex');
             document.getElementById('kdsApp').classList.remove('hidden');
             document.getElementById('kdsApp').classList.add('flex');
 
-            updateClock();
-            setInterval(updateClock, 1000);
+            // 2. Orden de encendido (Boot Sequence) seguro
+            try {
+                updateClock();
+                setInterval(updateClock, 1000);
 
-            // Mock Data Testing
-            /*
-            setTimeout(() => {
-                document.getElementById('loadingMsg').style.display = 'none';
-                let now = new Date();
-                let time11m = new Date(now.getTime() - 11 * 60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false});
-                let time18m = new Date(now.getTime() - 18 * 60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false});
+                // Mock Data Testing
+                /*
+                setTimeout(() => {
+                    document.getElementById('loadingMsg').style.display = 'none';
+                    let now = new Date();
+                    let time11m = new Date(now.getTime() - 11 * 60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false});
+                    let time18m = new Date(now.getTime() - 18 * 60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false});
+                    
+                    const mock = [
+                        { id: "MX-291", fecha: time11m, cliente: "Carlos Santana", pedido: "2x Huevos Rancheros\\n1x Café de Olla", notas: "Salsa aparte por favor" },
+                        { id: "MX-292", fecha: time18m, cliente: "Maria Gonzalez", pedido: "1x Carne Asada Plate\\n2x Jarritos" }
+                    ];
+                    ordersData = mock;
+                    renderTickets(mock);
+                }, 500);
+                */
                 
-                const mock = [
-                    { id: "MX-291", fecha: time11m, cliente: "Carlos Santana", pedido: "2x Huevos Rancheros\\n1x Café de Olla", notas: "Salsa aparte por favor" },
-                    { id: "MX-292", fecha: time18m, cliente: "Maria Gonzalez", pedido: "1x Carne Asada Plate\\n2x Jarritos" }
-                ];
-                ordersData = mock;
-                renderTickets(mock);
-            }, 500);
-            */
-            
-            fetchOrders();
-            if (!pollingInterval) pollingInterval = setInterval(fetchOrders, 15000);
+                fetchOrders();
+                if (!pollingInterval) pollingInterval = setInterval(fetchOrders, 15000);
+            } catch (error) {
+                console.error("Boot Sequence Error (Secondary Functions):", error);
+            }
         }
 
         function updateClock() {
