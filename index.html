@@ -381,7 +381,7 @@
 
             if (pendingOrders.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-full h-80 flex flex-col items-center justify-center text-zinc-600 gap-5 mt-10">
+                    <div id="emptyKitchenMsg" class="col-span-full h-80 flex flex-col items-center justify-center text-zinc-600 gap-5 mt-10">
                         <span class="text-6xl opacity-40">🍽️</span>
                         <h2 class="text-3xl font-black text-zinc-500">Kitchen is Clear</h2>
                         <p class="text-lg font-medium text-zinc-600">Waiting for new incoming orders...</p>
@@ -389,14 +389,27 @@
                 return;
             }
 
-            container.innerHTML = '';
+            // Eliminar mensajes vacíos/loader inicial si hay órdenes
+            const emptyMsg = document.getElementById('emptyKitchenMsg');
+            if (emptyMsg) emptyMsg.remove();
+            const loadingMsg = document.getElementById('loadingMsg');
+            if (loadingMsg) loadingMsg.remove();
 
+            // FASE DE ELIMINACIÓN (DOM Diffing básico)
+            const currentTicketNodes = document.querySelectorAll('[id^="ticket-"]');
+            const pendingIdsStr = pendingOrders.map(o => String(o.id));
+            
+            currentTicketNodes.forEach(node => {
+                const nodeIdStr = node.id.replace('ticket-', '');
+                if (!pendingIdsStr.includes(nodeIdStr)) {
+                    node.remove();
+                }
+            });
+
+            // FASE DE ACTUALIZACIÓN/CREACIÓN
             pendingOrders.forEach(order => {
                 const orderIdStr = String(order.id);
-                if (!knownOrderIds.has(orderIdStr)) {
-                    hasNewTicket = true;
-                    knownOrderIds.add(orderIdStr);
-                }
+                // Retiramos hasNewTicket de aquí para pasarlo abajo solo al crear
 
                 // Alertas de Productividad (Semáforo)
                 const delayMins = getOrderDelays(order.fecha);
@@ -406,17 +419,30 @@
                 if (delayMins >= 15) {
                     borderClass = "border-[4px] border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)] animate-[pulse_3s_ease-in-out_infinite]";
                     badgeHtml = `
-                    <div class="absolute top-0 right-0 bg-red-600 text-white font-black px-4 py-1.5 rounded-bl-xl text-sm shadow-xl z-20 flex items-center gap-1">
+                    <div class="absolute top-0 right-0 bg-red-600 text-white font-black px-4 py-1.5 rounded-bl-xl text-sm shadow-xl z-20 flex items-center gap-1 badge-container">
                         <span class="animate-bounce block">⚠️</span> 
                         <span>${delayMins}m DELAYED</span>
                     </div>`;
                 } else if (delayMins >= 10) {
                     borderClass = "border-[3px] border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)]";
                     badgeHtml = `
-                    <div class="absolute top-0 right-0 bg-amber-500 text-white font-bold px-3 py-1 rounded-bl-lg text-xs z-20">
+                    <div class="absolute top-0 right-0 bg-amber-500 text-white font-bold px-3 py-1 rounded-bl-lg text-xs z-20 badge-container">
                         ${delayMins}m Waiting
                     </div>`;
                 }
+
+                const existingTicket = document.getElementById('ticket-' + orderIdStr);
+
+                if (existingTicket) {
+                    existingTicket.className = `bg-amber-50 rounded-3xl flex flex-col overflow-hidden relative shadow-2xl ${borderClass}`;
+                    const oldBadge = existingTicket.querySelector('.badge-container');
+                    if (oldBadge) oldBadge.remove();
+                    if (badgeHtml !== '') existingTicket.insertAdjacentHTML('afterbegin', badgeHtml);
+                } else {
+                    if (!knownOrderIds.has(orderIdStr)) {
+                        hasNewTicket = true;
+                        knownOrderIds.add(orderIdStr);
+                    }
 
                 const rawItems = order.pedido ? order.pedido.split(/\\n|\\r\\n|\n/) : [];
                 const itemsHtml = rawItems.filter(i => i.trim() !== '').map(item => {
@@ -432,6 +458,7 @@
                 }).join('');
 
                 const ticket = document.createElement('div');
+                ticket.id = 'ticket-' + orderIdStr;
                 ticket.className = `ticket-enter bg-amber-50 rounded-3xl flex flex-col overflow-hidden relative shadow-2xl ${borderClass}`;
 
                 ticket.innerHTML = `
@@ -473,6 +500,7 @@
                     </div>
                 `;
                 container.appendChild(ticket);
+                }
             });
 
             if (hasNewTicket) {
