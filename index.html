@@ -30,14 +30,10 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        ::-webkit-scrollbar {
-            display: none;
-        }
-
-        body {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
 
         .ticket-enter {
             animation: slideIn 0.35s ease-out forwards;
@@ -49,23 +45,9 @@
         }
         
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            #printFrame, #printFrame * {
-                visibility: visible !important;
-                color: #000 !important;
-                background-color: #fff !important;
-            }
-            #printFrame {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 80mm;
-                padding: 0;
-                margin: 0;
-                font-family: 'Courier New', Courier, monospace !important;
-            }
+            body { background: #fff !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; height: auto !important; }
+            #loginScreen, #kdsApp { display: none !important; }
+            #printFrame { display: block !important; width: 80mm; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace !important; color: #000 !important; position: relative !important; }
             @page { margin: 0; size: auto; }
         }
 
@@ -128,9 +110,9 @@
                 
                 <div class="flex-1"></div>
                 
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleFullscreen()" class="flex items-center justify-center bg-dark-800 hover:bg-dark-800/80 w-11 h-11 rounded-xl border border-white/10 active:scale-95 transition-all outline-none text-zinc-400 hover:text-white group">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleFullScreen()" class="flex items-center justify-center w-11 h-11 rounded-xl active:scale-95 transition-all outline-none text-zinc-400 hover:text-white text-[28px] font-bold leading-none pb-1">
+                        ⛶
                     </button>
                     <button id="recentBtn" onclick="toggleRecentDrawer()" class="flex items-center gap-2 bg-dark-800 hover:bg-dark-800/80 px-4 py-2.5 rounded-xl border border-white/10 active:scale-95 transition-all outline-none">
                         <span class="text-xl">🕒</span>
@@ -149,7 +131,7 @@
         <!-- ═══ MAIN BOARD ═══ -->
         <main class="flex-1 p-6 overflow-y-auto w-full relative">
             <div id="ticketsContainer"
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start pb-20 w-full relative z-10">
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start pb-32 w-full relative z-10">
                 <!-- Loader State -->
                 <div id="loadingMsg"
                     class="col-span-full h-40 flex flex-col items-center justify-center text-zinc-500 gap-4 mt-20">
@@ -206,7 +188,7 @@
         });
 
         // --- HARDWARE / OPERATIONAL LOGIC ---
-        function toggleFullscreen() {
+        function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
                     console.log(`Error attempting to enable fullscreen: ${err.message}`);
@@ -439,6 +421,7 @@
                     <div class="bg-amber-100/50 flex-none px-6 py-5 border-b border-amber-200/50">
                         <p class="text-xs text-amber-900/40 font-black uppercase tracking-widest mb-1.5">Customer</p>
                         <h3 class="text-3xl font-black text-zinc-900 tracking-tight leading-none">${order.cliente || order.nombre || 'Walk-in Guest'}</h3>
+                        ${order.telefono || order.detalles ? `<p class="text-[10px] text-zinc-500 font-mono tracking-wider mt-1 truncate">📞 ${order.telefono || 'Sin Tel.'} • 📍 ${order.detalles ? order.detalles.split('| Notas:')[0] : 'Ubicación local'}</p>` : ''}
                         ${order.notas ? `<div class="mt-4 bg-red-50 text-red-700 px-5 py-3 rounded-2xl border-[3px] border-dotted border-red-500 text-sm font-black flex items-start gap-3 shadow-inner"><span class="text-red-500 animate-[pulse_1s_ease-in-out_infinite] block text-2xl leading-none">⚠️</span> <span class="text-base">${order.notas}</span></div>` : ''}
                     </div>
                     
@@ -587,6 +570,8 @@
                 <div style="border: 4px solid #000; padding: 15px 10px; margin: 20px 0; text-align: center;">
                     <p style="font-size: 14px; text-transform: uppercase; margin: 0 0 8px 0; font-weight: bold;">Customer / Cliente</p>
                     <h2 style="font-size: 28px; font-weight: 900; margin: 0; line-height: 1.1; text-transform: uppercase;">${order.cliente || order.nombre || 'Guest'}</h2>
+                    ${order.telefono ? `<p style="font-size: 18px; margin: 10px 0 0 0; font-weight: 900; font-family: monospace;">📞 ${order.telefono}</p>` : ''}
+                    ${order.detalles ? `<p style="font-size: 16px; margin: 10px 0 0 0; font-weight: bold; border-top: 1px solid #000; padding-top: 8px;">📍 ${order.detalles.split('| Notas:')[0]}</p>` : ''}
                 </div>
                 
                 ${order.notas ? `<div style="font-size: 16px; font-weight: 900; border: 4px dashed #000; padding: 15px; margin: 20px 0; text-transform: uppercase;">
@@ -599,6 +584,13 @@
                 <ul style="list-style: none; padding: 0; margin: 0;">
                     ${printItemsHtml}
                 </ul>
+
+                ${order.total ? `
+                <hr style="border-top: 3px solid #000; margin: 20px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 22px; font-weight: 900; padding: 5px 0;">
+                    <span>TOTAL:</span>
+                    <span>$${order.total}</span>
+                </div>` : ''}
                 
                 <div style="text-align: center; margin-top: 40px; font-size: 14px; padding-bottom: 20px; font-weight: bold;">
                     *** END OF TICKET ***
@@ -609,7 +601,20 @@
             
             setTimeout(() => {
                 window.print();
-            }, 100);
+                
+                // Cleanup para no sobrecargar el navegador de frames invisibles
+                window.onafterprint = function() {
+                    const frameToRemove = document.getElementById('printFrame');
+                    if(frameToRemove) frameToRemove.remove();
+                    window.onafterprint = null;
+                };
+                
+                // Fallback cleanup en caso de que onafterprint falle o no sea soportado
+                setTimeout(() => {
+                    const frameToRemove = document.getElementById('printFrame');
+                    if(frameToRemove) frameToRemove.remove();
+                }, 3000);
+            }, 300);
         }
 
     </script>
