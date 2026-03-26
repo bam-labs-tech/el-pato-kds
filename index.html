@@ -435,7 +435,7 @@
             const completedIds = JSON.parse(localStorage.getItem('elPatoCompleted') || '[]');
 
             let hasNewTicket = false;
-            const pendingOrders = orders.filter(o => !completedIds.includes(String(o.id)));
+            const pendingOrders = orders.filter(o => o.estado !== 'COMPLETED' && !completedIds.includes(String(o.id)));
 
             // Update Live Metrics
             const pendingBadge = document.getElementById('pendingBadge');
@@ -603,6 +603,16 @@
                 }
             }
             renderTickets(ordersData);
+
+            // Cloud Sync: Optimistic UI POST request (Fire and Forget)
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Evita bloqueos de CORS en peticiones opacas hacia Apps Script
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: "complete", id: idStr })
+            }).catch(e => console.error("Error silencioso en Cloud Sync:", e));
         }
 
         function restoreOrder(idStr) {
