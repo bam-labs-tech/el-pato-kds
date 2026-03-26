@@ -30,10 +30,22 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #09090b; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
 
         .ticket-enter {
             animation: slideIn 0.35s ease-out forwards;
@@ -41,14 +53,39 @@
 
         /* ═══ PRINT STYLES ═══ */
         @media screen {
-            #printFrame { display: none !important; }
+            #printFrame {
+                display: none !important;
+            }
         }
-        
+
         @media print {
-            body { background: #fff !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; height: auto !important; }
-            #loginScreen, #kdsApp { display: none !important; }
-            #printFrame { display: block !important; width: 80mm; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace !important; color: #000 !important; position: relative !important; }
-            @page { margin: 0; size: auto; }
+            body {
+                background: #fff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            #loginScreen,
+            #kdsApp {
+                display: none !important;
+            }
+
+            #printFrame {
+                display: block !important;
+                width: 80mm;
+                margin: 0;
+                padding: 0;
+                font-family: 'Courier New', Courier, monospace !important;
+                color: #000 !important;
+                position: relative !important;
+            }
+
+            @page {
+                margin: 0;
+                size: auto;
+            }
         }
 
         @keyframes slideIn {
@@ -68,7 +105,8 @@
 <body class="bg-zinc-950 min-h-screen flex flex-col relative w-full overflow-hidden">
 
     <!-- ═══ LOCK SCREEN (LOGIN) ═══ -->
-    <div id="loginScreen" class="absolute inset-0 z-[100] bg-zinc-950 flex flex-col items-center justify-center px-4 w-full">
+    <div id="loginScreen"
+        class="absolute inset-0 z-[100] bg-zinc-950 flex flex-col items-center justify-center px-4 w-full">
         <div
             class="bg-dark-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
@@ -85,7 +123,7 @@
 
     <!-- ═══ KDS APP ═══ -->
     <div id="kdsApp" class="hidden flex-1 flex-col w-full h-screen overflow-hidden">
-        
+
         <!-- ═══ KDS HEADER ═══ -->
         <header
             class="bg-dark-900 border-b border-white/10 px-6 py-4 flex items-center justify-between shadow-lg z-40 flex-shrink-0">
@@ -94,7 +132,9 @@
                 <div class="flex flex-col">
                     <div class="flex items-center gap-3">
                         <h1 class="text-2xl font-black text-white tracking-tight leading-none">Kitchen Monitor</h1>
-                        <span id="pendingBadge" class="hidden bg-amber-500 text-zinc-950 font-black text-xs px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)]">Pending: 0</span>
+                        <span id="pendingBadge"
+                            class="hidden bg-amber-500 text-zinc-950 font-black text-xs px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.5)]">Pending:
+                            0</span>
                     </div>
                     <p class="text-[11px] text-amber-500 font-bold tracking-[0.2em] uppercase mt-1">El Pato</p>
                 </div>
@@ -102,19 +142,28 @@
 
             <!-- Live Indicator & Actions -->
             <div class="flex flex-1 justify-between px-6 items-center">
-                <div id="liveIndicator" class="flex items-center gap-2.5 bg-dark-800/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-inner hidden md:flex relative overflow-hidden transition-all duration-300">
-                    <div id="liveBg" class="absolute inset-0 bg-emerald-500/10 rounded-full blur-md transition-all duration-300"></div>
-                    <div id="liveDot" class="w-3 h-3 rounded-full bg-emerald-400 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_15px_1px_rgba(16,185,129,1)] relative z-10 transition-colors duration-300"></div>
-                    <span id="liveText" class="text-emerald-400 text-sm font-bold uppercase tracking-wider relative z-10 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)] transition-all duration-300">Live Sync</span>
+                <div id="liveIndicator"
+                    class="flex items-center gap-2.5 bg-dark-800/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-inner hidden md:flex relative overflow-hidden transition-all duration-300">
+                    <div id="liveBg"
+                        class="absolute inset-0 bg-emerald-500/10 rounded-full blur-md transition-all duration-300">
+                    </div>
+                    <div id="liveDot"
+                        class="w-3 h-3 rounded-full bg-emerald-400 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_15px_1px_rgba(16,185,129,1)] relative z-10 transition-colors duration-300">
+                    </div>
+                    <span id="liveText"
+                        class="text-emerald-400 text-sm font-bold uppercase tracking-wider relative z-10 drop-shadow-[0_0_5px_rgba(16,185,129,0.8)] transition-all duration-300">Live
+                        Sync</span>
                 </div>
-                
+
                 <div class="flex-1"></div>
-                
+
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleFullScreen()" class="flex items-center justify-center w-11 h-11 rounded-xl active:scale-95 transition-all outline-none text-zinc-400 hover:text-white text-[28px] font-bold leading-none pb-1">
+                    <button onclick="toggleFullScreen()"
+                        class="flex items-center justify-center w-11 h-11 rounded-xl active:scale-95 transition-all outline-none text-zinc-400 hover:text-white text-[28px] font-bold leading-none pb-1">
                         ⛶
                     </button>
-                    <button id="recentBtn" onclick="toggleRecentDrawer()" class="flex items-center gap-2 bg-dark-800 hover:bg-dark-800/80 px-4 py-2.5 rounded-xl border border-white/10 active:scale-95 transition-all outline-none">
+                    <button id="recentBtn" onclick="toggleRecentDrawer()"
+                        class="flex items-center gap-2 bg-dark-800 hover:bg-dark-800/80 px-4 py-2.5 rounded-xl border border-white/10 active:scale-95 transition-all outline-none">
                         <span class="text-xl">🕒</span>
                         <span id="recentCountText" class="text-zinc-200 font-bold tracking-wide">Recent</span>
                     </button>
@@ -123,7 +172,8 @@
 
             <!-- Clock -->
             <div class="text-right border-l border-white/10 pl-6 w-32">
-                <div id="clockTime" class="text-3xl font-black text-amber-500 font-mono tracking-tighter leading-none drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">
+                <div id="clockTime"
+                    class="text-3xl font-black text-amber-500 font-mono tracking-tighter leading-none drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">
                     00:00</div>
             </div>
         </header>
@@ -147,18 +197,22 @@
                 </div>
             </div>
         </main>
-        
+
         <!-- ═══ RECENT ORDERS SIDE DRAWER ═══ -->
-        <div id="recentDrawer" class="absolute inset-y-0 right-0 w-96 max-w-full bg-zinc-950/70 backdrop-blur-2xl border-l border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)] transform translate-x-full transition-transform duration-300 z-50 flex flex-col">
+        <div id="recentDrawer"
+            class="absolute inset-y-0 right-0 w-96 max-w-full bg-zinc-950/70 backdrop-blur-2xl border-l border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.8)] transform translate-x-full transition-transform duration-300 z-50 flex flex-col">
             <div class="p-5 border-b border-white/10 flex justify-between items-center bg-transparent">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2 relative"><span class="absolute -inset-1 bg-white/5 blur-lg rounded-full"></span><span class="relative">🕒</span> <span class="relative">Completed</span></h3>
-                <button onclick="toggleRecentDrawer()" class="p-2 w-10 h-10 bg-white/5 text-zinc-300 backdrop-blur-md rounded-full hover:bg-white/10 hover:text-white active:scale-95 transition font-bold leading-none flex items-center justify-center border border-white/10">&times;</button>
+                <h3 class="text-xl font-bold text-white flex items-center gap-2 relative"><span
+                        class="absolute -inset-1 bg-white/5 blur-lg rounded-full"></span><span
+                        class="relative">🕒</span> <span class="relative">Completed</span></h3>
+                <button onclick="toggleRecentDrawer()"
+                    class="p-2 w-10 h-10 bg-white/5 text-zinc-300 backdrop-blur-md rounded-full hover:bg-white/10 hover:text-white active:scale-95 transition font-bold leading-none flex items-center justify-center border border-white/10">&times;</button>
             </div>
             <div id="recentList" class="p-4 flex-1 overflow-y-auto flex flex-col gap-3">
                 <!-- Rendered Items -->
             </div>
         </div>
-        
+
     </div> <!-- END KDS APP -->
 
     <!-- ═══ SOUND ALERT ═══ -->
@@ -208,9 +262,9 @@
             const bg = document.getElementById('liveBg');
             const dot = document.getElementById('liveDot');
             const text = document.getElementById('liveText');
-            
+
             if (!ind) return; // Si aún no ha cargado el DOM
-            
+
             if (navigator.onLine) {
                 // Return to Online Premium Style
                 bg.className = 'absolute inset-0 bg-emerald-500/10 rounded-full blur-md transition-all duration-300';
@@ -225,7 +279,7 @@
                 text.textContent = 'OFFLINE ⚠️';
             }
         }
-        
+
         // Ejecutar estado inicial de red
         window.addEventListener('load', updateNetworkStatus);
 
@@ -245,7 +299,7 @@
             // 1. Mostrar la interfaz (Visibility Logic) forzando inline styles
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('kdsApp').style.display = 'flex';
-            
+
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('flex');
             document.getElementById('kdsApp').classList.remove('hidden');
@@ -272,7 +326,7 @@
                     renderTickets(mock);
                 }, 500);
                 */
-                
+
                 fetchOrders();
                 if (!pollingInterval) pollingInterval = setInterval(fetchOrders, 15000);
             } catch (error) {
@@ -307,10 +361,10 @@
         function getOrderDelays(orderTimeStr) {
             // Asume strings horarias del tipo "15:30"
             if (!orderTimeStr) return 0;
-            
+
             const now = new Date();
             const [hours, minutes] = orderTimeStr.split(/[:]/).map(Number);
-            
+
             if (isNaN(hours) || isNaN(minutes)) return 0;
 
             const orderDate = new Date();
@@ -329,7 +383,7 @@
         function renderTickets(orders) {
             const container = document.getElementById('ticketsContainer');
             const completedIds = JSON.parse(localStorage.getItem('elPatoCompleted') || '[]');
-            
+
             let hasNewTicket = false;
             const pendingOrders = orders.filter(o => !completedIds.includes(String(o.id)));
 
@@ -343,7 +397,7 @@
                 pendingBadge.classList.add('hidden');
                 pendingBadge.classList.remove('inline-flex');
             }
-            
+
             const recentLog = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]');
             document.getElementById('recentCountText').textContent = recentLog.length > 0 ? `Recent (${recentLog.length})` : 'Recent';
 
@@ -401,7 +455,7 @@
 
                 const ticket = document.createElement('div');
                 ticket.className = `ticket-enter bg-amber-50 rounded-3xl flex flex-col overflow-hidden relative shadow-2xl ${borderClass}`;
-                
+
                 ticket.innerHTML = `
                     ${badgeHtml}
                     <!-- Header -->
@@ -446,9 +500,9 @@
             if (hasNewTicket) {
                 const bell = document.getElementById('bellSound');
                 bell.currentTime = 0;
-                bell.play().catch(() => {});
+                bell.play().catch(() => { });
             }
-            
+
             // Refrescar el Drawer silenciosamente cada vez que repintamos Main Board
             rebuildRecentDrawer();
         }
@@ -459,7 +513,7 @@
             if (!completedOrders.includes(String(idStr))) {
                 completedOrders.push(String(idStr));
                 localStorage.setItem('elPatoCompleted', JSON.stringify(completedOrders));
-                
+
                 // Extraer el objeto entero para el History Log
                 const orderSnapshot = ordersData.find(o => String(o.id) === String(idStr));
                 if (orderSnapshot) {
@@ -478,7 +532,7 @@
             let completedOrders = JSON.parse(localStorage.getItem('elPatoCompleted') || '[]');
             completedOrders = completedOrders.filter(id => id !== String(idStr));
             localStorage.setItem('elPatoCompleted', JSON.stringify(completedOrders));
-            
+
             // Eliminar del Drawer visual
             let log = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]');
             log = log.filter(o => String(o.id) !== String(idStr));
@@ -487,32 +541,32 @@
             // Notifica brevemente por sonido que algo volvió
             const bell = document.getElementById('bellSound');
             bell.currentTime = 0;
-            bell.play().catch(() => {});
+            bell.play().catch(() => { });
 
             renderTickets(ordersData);
-            
+
             // Cerramos el drawer para enfocarnos en la pantalla nueva
             toggleRecentDrawer(true);
         }
-        
+
         function toggleRecentDrawer(forceClose = false) {
             const drawer = document.getElementById('recentDrawer');
-            if(drawer.classList.contains('translate-x-full') && !forceClose) {
+            if (drawer.classList.contains('translate-x-full') && !forceClose) {
                 drawer.classList.remove('translate-x-full');
             } else {
                 drawer.classList.add('translate-x-full');
             }
         }
-        
+
         function rebuildRecentDrawer() {
             const list = document.getElementById('recentList');
             let log = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]');
-            
-            if(log.length === 0) {
-                 list.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-zinc-600 gap-3"><span class="text-3xl">🧹</span><p class="font-bold text-center">No recent orders.<br><span class="text-xs font-normal">Complete a ticket to see it here.</span></p></div>';
-                 return;
+
+            if (log.length === 0) {
+                list.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-zinc-600 gap-3"><span class="text-3xl">🧹</span><p class="font-bold text-center">No recent orders.<br><span class="text-xs font-normal">Complete a ticket to see it here.</span></p></div>';
+                return;
             }
-            
+
             list.innerHTML = log.map(order => `
                 <div class="bg-zinc-900/60 backdrop-blur-md p-5 rounded-2xl border border-white/10 flex flex-col gap-2 shadow-xl relative overflow-hidden group">
                     <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -551,7 +605,7 @@
 
             const printFrame = document.createElement('div');
             printFrame.id = 'printFrame';
-            
+
             printFrame.innerHTML = `
                 <div style="text-align: center; margin-bottom: 20px; padding-top: 10px;">
                     <h1 style="font-size: 36px; margin: 0; font-weight: 900; letter-spacing: -2px;">EL PATO</h1>
@@ -598,17 +652,24 @@
             `;
 
             document.body.appendChild(printFrame);
-            
+
             setTimeout(() => {
                 window.print();
-            }, 50);
-        }
 
-        // Global Event Listener para Limpiar el Ticket Impreso (Mobile & Desktop Safe)
-        window.addEventListener('afterprint', () => {
-            const oldFrame = document.getElementById('printFrame');
-            if (oldFrame) oldFrame.remove();
-        });
+                // Cleanup para no sobrecargar el navegador de frames invisibles
+                window.onafterprint = function () {
+                    const frameToRemove = document.getElementById('printFrame');
+                    if (frameToRemove) frameToRemove.remove();
+                    window.onafterprint = null;
+                };
+
+                // Fallback cleanup en caso de que onafterprint falle o no sea soportado
+                setTimeout(() => {
+                    const frameToRemove = document.getElementById('printFrame');
+                    if (frameToRemove) frameToRemove.remove();
+                }, 3000);
+            }, 300);
+        }
 
     </script>
 </body>
