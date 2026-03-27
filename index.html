@@ -501,7 +501,7 @@
                 pendingBadge.classList.remove('inline-flex');
             }
 
-            const recentLog = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]');
+            const recentLog = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]').filter(o => o && o.id);
             document.getElementById('recentCountText').textContent = recentLog.length > 0 ? `Recent (${recentLog.length})` : 'Recent';
 
             if (pendingOrders.length === 0) {
@@ -701,7 +701,15 @@
 
         function rebuildRecentDrawer() {
             const list = document.getElementById('recentList');
-            let log = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]');
+            let rawLog = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]');
+
+            // Filtro de seguridad: Quitar nulos, undefined o datos corruptos
+            let log = rawLog.filter(order => order && order.id);
+
+            // Autolimpieza: Si había basura, curar el localStorage silenciosamente
+            if (rawLog.length !== log.length) {
+                localStorage.setItem('elPatoHistoryLog', JSON.stringify(log));
+            }
 
             if (log.length === 0) {
                 list.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-zinc-600 gap-3"><span class="text-3xl">🧹</span><p class="font-bold text-center">No recent orders.<br><span class="text-xs font-normal">Complete a ticket to see it here.</span></p></div>';
@@ -713,7 +721,7 @@
                     <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="flex justify-between items-center text-white font-bold relative z-10">
                         <span class="text-zinc-500 font-black uppercase tracking-widest text-[10px] bg-black/40 px-2 py-0.5 rounded-full">#${order.id}</span>
-                        <span class="text-amber-500 font-mono text-xs drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]">${order.fecha}</span>
+                        <span class="text-amber-500 font-mono text-xs drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]">${formatTicketTime(order.fecha)}</span>
                     </div>
                     <p class="text-xl font-black text-zinc-100 truncate leading-none mt-1 mb-2 relative z-10">${order.cliente || order.nombre}</p>
                     <button onclick="restoreOrder('${order.id}')" class="w-full mt-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 py-3 rounded-xl font-black text-sm active:scale-95 transition-all outline-none relative z-10 hover:border-red-500/40 hover:text-red-300 hover:shadow-[0_0_15px_rgba(239,68,68,0.2)]">
