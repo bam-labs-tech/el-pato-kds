@@ -230,29 +230,70 @@
 
         <!-- ═══ MODAL Z-REPORT (CORTE DE CAJA) ═══ -->
         <div id="zReportModal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-            <div class="bg-dark-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl relative transform transition-all scale-95 opacity-0 duration-300" id="zReportCard">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl -mt-10"></div>
-                <span class="text-5xl mb-4 block relative z-10">📊</span>
-                <h2 class="text-2xl font-black text-white tracking-tight relative z-10">Corte de Turno</h2>
-                <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-6 relative z-10">Resumen de Hoy</p>
+            <div class="bg-dark-900 border border-white/10 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative transform transition-all scale-95 opacity-0 duration-300" id="zReportCard">
+                <!-- Botón Cerrar (x) Sutil -->
+                <button onclick="closeZReport()" class="absolute top-5 right-5 text-zinc-500 hover:text-white transition-colors z-20 outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mt-10"></div>
                 
-                <div class="bg-dark-800 rounded-2xl p-6 border border-white/5 mb-6 relative z-10">
-                    <div class="mb-4">
-                        <p class="text-zinc-400 text-sm font-bold">Tickets Completados</p>
-                        <p class="text-3xl font-black text-white" id="zTicketsCount">0</p>
+                <div class="text-center mb-6 relative z-10">
+                    <span class="text-5xl block mb-2">📊</span>
+                    <h2 class="text-2xl font-black text-white tracking-tight">Corte de Turno</h2>
+                    <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Resumen de Hoy</p>
+                </div>
+                
+                <div class="flex flex-col gap-3 mb-8 relative z-10">
+                    <!-- Barra 1: Hora Generada -->
+                    <div class="bg-dark-800 rounded-xl px-4 py-3 flex justify-center items-center border border-white/5 shadow-inner">
+                        <span id="zGenerationTime" class="text-zinc-400 text-sm font-medium tracking-wide">Generado a las: --:--</span>
                     </div>
-                    <div>
-                        <p class="text-zinc-400 text-sm font-bold">Ventas Totales</p>
-                        <p class="text-4xl font-black text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.4)]" id="zTotalSales">$0.00</p>
+
+                    <!-- Barra 2: Tickets -->
+                    <div class="bg-dark-800 rounded-xl px-5 py-4 flex items-center justify-between border border-white/5 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl opacity-80">🎫</span>
+                            <span class="text-zinc-300 font-bold tracking-wide">Tickets Completados</span>
+                        </div>
+                        <span class="text-3xl font-black text-white" id="zTicketsCount">0</span>
+                    </div>
+
+                    <!-- Barra 3: Ventas -->
+                    <div class="bg-dark-800 rounded-xl px-5 py-4 flex items-center justify-between border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl opacity-80">💰</span>
+                            <span class="text-zinc-300 font-bold tracking-wide">Ventas Totales</span>
+                        </div>
+                        <span class="text-3xl font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)] tracking-tight" id="zTotalSales">$0.00</span>
                     </div>
                 </div>
                 
-                <div class="flex gap-3 relative z-10">
-                    <button onclick="closeZReport()" class="flex-1 py-4 bg-zinc-800 hover:bg-zinc-700 active:scale-95 transition-all text-white font-bold text-sm rounded-2xl border border-white/10">
-                        Volver
+                <div class="flex flex-col gap-3 relative z-10">
+                    <button onclick="endShift()" class="w-full py-4 bg-red-600 hover:bg-red-500 active:scale-95 transition-all text-white font-black text-lg rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.5)] border-b-4 border-red-800 flex justify-center items-center gap-2">
+                        <span>FINALIZAR TURNO</span>
                     </button>
-                    <button onclick="endShift()" class="flex-[2] py-4 bg-red-600 hover:bg-red-500 active:scale-95 transition-all text-white font-black text-lg rounded-2xl shadow-[0_0_15px_rgba(220,38,38,0.4)] border-b-4 border-red-800">
-                        Finalizar Turno
+                    <button onclick="closeZReport()" class="w-full py-3.5 bg-transparent hover:bg-white/5 active:scale-95 transition-all text-zinc-400 hover:text-white font-bold text-sm rounded-2xl border border-white/10">
+                        Volver / Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ MODAL CONFIRM SHIFT ═══ -->
+        <div id="confirmShiftModal" class="fixed inset-0 z-[300] hidden items-center justify-center bg-black/90 backdrop-blur-md px-4 opacity-0 transition-opacity duration-300">
+            <div class="bg-dark-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300" id="confirmShiftCard">
+                <div class="text-6xl mb-4 animate-pulse">⚠️</div>
+                <h3 class="text-2xl font-black text-white mb-2">¿Finalizar Turno?</h3>
+                <p class="text-zinc-400 text-sm mb-8">Esto borrará el historial de tickets en esta pantalla para empezar un nuevo día.</p>
+                <div class="flex gap-3">
+                    <button onclick="cancelEndShift()" class="flex-1 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-white/10 active:scale-95 transition-all outline-none">
+                        Cancelar
+                    </button>
+                    <button onclick="executeEndShift()" class="flex-1 py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl shadow-[0_0_15px_rgba(220,38,38,0.4)] border-b-4 border-red-800 active:scale-95 transition-all outline-none">
+                        Sí, Limpiar
                     </button>
                 </div>
             </div>
@@ -312,6 +353,10 @@
             // Inyectar en el DOM del Modal
             document.getElementById('zTicketsCount').innerText = count;
             document.getElementById('zTotalSales').innerText = `$${total.toFixed(2)}`;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+            document.getElementById('zGenerationTime').innerText = `Generado a las: ${timeString}`;
 
             // Mostrar el Modal y Animar (Tailwind)
             const modal = document.getElementById('zReportModal');
@@ -340,12 +385,31 @@
         }
 
         function endShift() {
-            const confirmacion = confirm("⚠️ ¿Estás seguro de finalizar el turno?\n\nEsto borrará el historial de tickets completados en esta pantalla para empezar un nuevo día.");
-            if (confirmacion) {
-                localStorage.removeItem('elPatoCompleted');
-                localStorage.removeItem('elPatoHistoryLog');
-                window.location.reload();
-            }
+            const modal = document.getElementById('confirmShiftModal');
+            const card = document.getElementById('confirmShiftCard');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                card.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function cancelEndShift() {
+            const modal = document.getElementById('confirmShiftModal');
+            const card = document.getElementById('confirmShiftCard');
+            modal.classList.add('opacity-0');
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function executeEndShift() {
+            localStorage.removeItem('elPatoCompleted');
+            localStorage.removeItem('elPatoHistoryLog');
+            window.location.reload();
         }
         let pollingInterval = null;
 
