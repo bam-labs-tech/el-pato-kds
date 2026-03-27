@@ -194,7 +194,8 @@
             style="-webkit-overflow-scrolling: touch;">
             <div id="pullToRefresh"
                 class="absolute top-0 left-0 w-full flex justify-center items-center h-16 -mt-16 transition-opacity opacity-0 text-zinc-500 font-bold text-sm gap-2 z-0">
-                <span class="animate-spin text-xl">↻</span> Recargando...</div>
+                <span class="animate-spin text-xl">↻</span> Recargando...
+            </div>
             <div id="ticketsContainer"
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start pb-32 w-full relative z-10">
                 <!-- Loader State -->
@@ -229,31 +230,40 @@
         </div>
 
         <!-- ═══ MODAL Z-REPORT (CORTE DE CAJA) ═══ -->
-        <div id="zReportModal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-            <div class="bg-dark-900 border border-white/10 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative transform transition-all scale-95 opacity-0 duration-300" id="zReportCard">
+        <div id="zReportModal"
+            class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+            <div class="bg-dark-900 border border-white/10 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative transform transition-all scale-95 opacity-0 duration-300"
+                id="zReportCard">
                 <!-- Botón Cerrar (x) Sutil -->
-                <button onclick="closeZReport()" class="absolute top-5 right-5 text-zinc-500 hover:text-white transition-colors z-20 outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <button onclick="closeZReport()"
+                    class="absolute top-5 right-5 text-zinc-500 hover:text-white transition-colors z-20 outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
 
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mt-10"></div>
-                
+                <div
+                    class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mt-10">
+                </div>
+
                 <div class="text-center mb-6 relative z-10">
                     <span class="text-5xl block mb-2">📊</span>
                     <h2 class="text-2xl font-black text-white tracking-tight">Corte de Turno</h2>
                     <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Resumen de Hoy</p>
                 </div>
-                
+
                 <div class="flex flex-col gap-3 mb-8 relative z-10">
                     <!-- Barra 1: Hora Generada -->
-                    <div class="bg-dark-800 rounded-xl px-4 py-3 flex justify-center items-center border border-white/5 shadow-inner">
-                        <span id="zGenerationTime" class="text-zinc-400 text-sm font-medium tracking-wide">Generado a las: --:--</span>
+                    <div
+                        class="bg-dark-800 rounded-xl px-4 py-3 flex justify-center items-center border border-white/5 shadow-inner">
+                        <span id="zGenerationTime" class="text-zinc-400 text-sm font-medium tracking-wide">Generado a
+                            las: --:--</span>
                     </div>
 
                     <!-- Barra 2: Tickets -->
-                    <div class="bg-dark-800 rounded-xl px-5 py-4 flex items-center justify-between border border-white/5 shadow-sm">
+                    <div
+                        class="bg-dark-800 rounded-xl px-5 py-4 flex items-center justify-between border border-white/5 shadow-sm">
                         <div class="flex items-center gap-3">
                             <span class="text-2xl opacity-80">🎫</span>
                             <span class="text-zinc-300 font-bold tracking-wide">Tickets Completados</span>
@@ -262,20 +272,25 @@
                     </div>
 
                     <!-- Barra 3: Ventas -->
-                    <div class="bg-dark-800 rounded-xl px-5 py-4 flex items-center justify-between border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+                    <div
+                        class="bg-dark-800 rounded-xl px-5 py-4 flex items-center justify-between border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
                         <div class="flex items-center gap-3">
                             <span class="text-2xl opacity-80">💰</span>
                             <span class="text-zinc-300 font-bold tracking-wide">Ventas Totales</span>
                         </div>
-                        <span class="text-3xl font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)] tracking-tight" id="zTotalSales">$0.00</span>
+                        <span
+                            class="text-3xl font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)] tracking-tight"
+                            id="zTotalSales">$0.00</span>
                     </div>
                 </div>
-                
+
                 <div class="flex flex-col gap-3 relative z-10">
-                    <button onclick="endShift()" class="w-full py-4 bg-red-600 hover:bg-red-500 active:scale-95 transition-all text-white font-black text-lg rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.5)] border-b-4 border-red-800 flex justify-center items-center gap-2">
+                    <button onclick="endShift()"
+                        class="w-full py-4 bg-red-600 hover:bg-red-500 active:scale-95 transition-all text-white font-black text-lg rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.5)] border-b-4 border-red-800 flex justify-center items-center gap-2">
                         <span>FINALIZAR TURNO</span>
                     </button>
-                    <button onclick="closeZReport()" class="w-full py-3.5 bg-transparent hover:bg-white/5 active:scale-95 transition-all text-zinc-400 hover:text-white font-bold text-sm rounded-2xl border border-white/10">
+                    <button onclick="closeZReport()"
+                        class="w-full py-3.5 bg-transparent hover:bg-white/5 active:scale-95 transition-all text-zinc-400 hover:text-white font-bold text-sm rounded-2xl border border-white/10">
                         Volver / Cerrar
                     </button>
                 </div>
@@ -283,16 +298,21 @@
         </div>
 
         <!-- ═══ MODAL CONFIRM SHIFT ═══ -->
-        <div id="confirmShiftModal" class="fixed inset-0 z-[300] hidden items-center justify-center bg-black/90 backdrop-blur-md px-4 opacity-0 transition-opacity duration-300">
-            <div class="bg-dark-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300" id="confirmShiftCard">
+        <div id="confirmShiftModal"
+            class="fixed inset-0 z-[300] hidden items-center justify-center bg-black/90 backdrop-blur-md px-4 opacity-0 transition-opacity duration-300">
+            <div class="bg-dark-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300"
+                id="confirmShiftCard">
                 <div class="text-6xl mb-4 animate-pulse">⚠️</div>
                 <h3 class="text-2xl font-black text-white mb-2">¿Finalizar Turno?</h3>
-                <p class="text-zinc-400 text-sm mb-8">Esto borrará el historial de tickets en esta pantalla para empezar un nuevo día.</p>
+                <p class="text-zinc-400 text-sm mb-8">Esto borrará el historial de tickets en esta pantalla para empezar
+                    un nuevo día.</p>
                 <div class="flex gap-3">
-                    <button onclick="cancelEndShift()" class="flex-1 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-white/10 active:scale-95 transition-all outline-none">
+                    <button onclick="cancelEndShift()"
+                        class="flex-1 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-white/10 active:scale-95 transition-all outline-none">
                         Cancelar
                     </button>
-                    <button onclick="executeEndShift()" class="flex-1 py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl shadow-[0_0_15px_rgba(220,38,38,0.4)] border-b-4 border-red-800 active:scale-95 transition-all outline-none">
+                    <button onclick="executeEndShift()"
+                        class="flex-1 py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl shadow-[0_0_15px_rgba(220,38,38,0.4)] border-b-4 border-red-800 active:scale-95 transition-all outline-none">
                         Sí, Limpiar
                     </button>
                 </div>
@@ -349,11 +369,11 @@
                     if (!isNaN(num)) total += num;
                 }
             });
-            
+
             // Inyectar en el DOM del Modal
             document.getElementById('zTicketsCount').innerText = count;
             document.getElementById('zTotalSales').innerText = `$${total.toFixed(2)}`;
-            
+
             const now = new Date();
             const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
             document.getElementById('zGenerationTime').innerText = `Generado a las: ${timeString}`;
@@ -363,7 +383,7 @@
             const card = document.getElementById('zReportCard');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            
+
             setTimeout(() => {
                 card.classList.remove('scale-95', 'opacity-0');
                 card.classList.add('scale-100', 'opacity-100');
@@ -373,11 +393,11 @@
         function closeZReport() {
             const modal = document.getElementById('zReportModal');
             const card = document.getElementById('zReportCard');
-            
+
             // Revertir Animación
             card.classList.remove('scale-100', 'opacity-100');
             card.classList.add('scale-95', 'opacity-0');
-            
+
             setTimeout(() => {
                 modal.classList.remove('flex');
                 modal.classList.add('hidden');
@@ -579,8 +599,8 @@
                 pendingBadge.classList.remove('inline-flex');
             }
 
-            const recentLog = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]').filter(o => o && o.id);
-            document.getElementById('recentCountText').textContent = recentLog.length > 0 ? `Recent (${recentLog.length})` : 'Recent';
+            const cloudCompletedOrders = orders.filter(o => o.estado === 'COMPLETED' || completedIds.includes(String(o.id)));
+            document.getElementById('recentCountText').textContent = cloudCompletedOrders.length > 0 ? `Recent (${cloudCompletedOrders.length})` : 'Recent';
 
             if (pendingOrders.length === 0) {
                 container.innerHTML = `
@@ -713,7 +733,7 @@
             }
 
             // Refrescar el Drawer silenciosamente cada vez que repintamos Main Board
-            rebuildRecentDrawer();
+            rebuildRecentDrawer(cloudCompletedOrders);
         }
 
         // --- FASE 1: GESTIÓN DE ERRORES (UNDO / HISTORIAL) ---
@@ -747,7 +767,7 @@
         }
 
         function restoreOrder(idStr) {
-            // Eliminar de los bloqueados
+            // Eliminar de los bloqueados locales
             let completedOrders = JSON.parse(localStorage.getItem('elPatoCompleted') || '[]');
             completedOrders = completedOrders.filter(id => id !== String(idStr));
             localStorage.setItem('elPatoCompleted', JSON.stringify(completedOrders));
@@ -757,15 +777,26 @@
             log = log.filter(o => String(o.id) !== String(idStr));
             localStorage.setItem('elPatoHistoryLog', JSON.stringify(log));
 
+            // Cloud Undo: Enviar petición silenciosa de desmarcado a la nube
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: "restore", id: idStr })
+            }).catch(e => console.error("Error silencioso en Cloud Undo:", e));
+
             // Notifica brevemente por sonido que algo volvió
             const bell = document.getElementById('bellSound');
             bell.currentTime = 0;
             bell.play().catch(() => { });
 
-            renderTickets(ordersData);
-
             // Cerramos el drawer para enfocarnos en la pantalla nueva
             toggleRecentDrawer(true);
+
+            // Forzamos una sincronización inmediata para repintar
+            fetchOrders();
         }
 
         function toggleRecentDrawer(forceClose = false) {
@@ -777,24 +808,17 @@
             }
         }
 
-        function rebuildRecentDrawer() {
+        function rebuildRecentDrawer(logData = []) {
             const list = document.getElementById('recentList');
-            let rawLog = JSON.parse(localStorage.getItem('elPatoHistoryLog') || '[]');
+            // Tomamos solo los últimos 20 para no saturar la memoria
+            const displayLog = logData.slice(0, 20);
 
-            // Filtro de seguridad: Quitar nulos, undefined o datos corruptos
-            let log = rawLog.filter(order => order && order.id);
-
-            // Autolimpieza: Si había basura, curar el localStorage silenciosamente
-            if (rawLog.length !== log.length) {
-                localStorage.setItem('elPatoHistoryLog', JSON.stringify(log));
-            }
-
-            if (log.length === 0) {
+            if (displayLog.length === 0) {
                 list.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-zinc-600 gap-3"><span class="text-3xl">🧹</span><p class="font-bold text-center">No recent orders.<br><span class="text-xs font-normal">Complete a ticket to see it here.</span></p></div>';
                 return;
             }
 
-            list.innerHTML = log.map(order => `
+            list.innerHTML = displayLog.map(order => `
                 <div class="bg-zinc-900/60 backdrop-blur-md p-5 rounded-2xl border border-white/10 flex flex-col gap-2 shadow-xl relative overflow-hidden group">
                     <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="flex justify-between items-center text-white font-bold relative z-10">
