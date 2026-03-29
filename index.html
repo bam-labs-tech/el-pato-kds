@@ -161,6 +161,10 @@
                 <div class="flex-1"></div>
 
                 <div class="flex items-center gap-2">
+                    <button onclick="openCuentasModal()" title="Caja / Mesas"
+                        class="flex items-center justify-center px-4 h-11 bg-amber-500/20 text-amber-500 rounded-xl active:scale-95 transition-all outline-none hover:bg-amber-500/30 font-bold border border-amber-500/30 gap-2 whitespace-nowrap">
+                        <span>💳</span> Caja / Mesas
+                    </button>
                     <button onclick="generateZReport()" title="Corte de Caja"
                         class="flex items-center justify-center w-11 h-11 rounded-xl active:scale-95 transition-all outline-none hover:bg-zinc-800 text-zinc-400 hover:text-white text-[24px] font-bold leading-none">
                         📊
@@ -321,6 +325,33 @@
     </div>
 
     </div> <!-- END KDS APP -->
+
+    <!-- ═══ MODAL CAJA / MESAS (POS) ═══ -->
+    <div id="cuentasModal"
+        class="fixed inset-0 z-[250] hidden items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="bg-dark-900 border border-white/10 rounded-3xl p-6 max-w-5xl w-full h-[85vh] flex flex-col shadow-2xl relative transform transition-all scale-95 opacity-0 duration-300"
+            id="cuentasCard">
+            <button onclick="closeCuentasModal()"
+                class="absolute top-5 right-5 text-zinc-500 hover:text-white transition-colors z-20 outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="mb-6 relative z-10 flex items-center gap-4">
+                <span class="text-4xl text-amber-500">💳</span>
+                <div>
+                    <h2 class="text-2xl font-black text-white tracking-tight">Caja / Mesas</h2>
+                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-widest mt-1">Punto de Venta</p>
+                </div>
+            </div>
+
+            <div id="cuentasList" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pr-2 pb-6">
+                <!-- Cuentas renderizadas dinámicamente -->
+            </div>
+        </div>
+    </div>
 
     <!-- ═══ SOUND ALERT ═══ -->
     <audio id="bellSound" preload="auto">
@@ -986,6 +1017,157 @@
                     ptrIndicator.style.opacity = 0;
                 }
             });
+        }
+
+        // --- PUNTO DE VENTA / CAJA / CERRAR MESAS ---
+        function openCuentasModal() {
+            renderCuentas(ordersData);
+            const modal = document.getElementById('cuentasModal');
+            const card = document.getElementById('cuentasCard');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            setTimeout(() => {
+                card.classList.remove('scale-95', 'opacity-0');
+                card.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeCuentasModal() {
+            const modal = document.getElementById('cuentasModal');
+            const card = document.getElementById('cuentasCard');
+
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function renderCuentas(orders) {
+            const container = document.getElementById('cuentasList');
+            const activeOrders = orders.filter(o => o.pago === 'SIN_PAGAR');
+
+            if (activeOrders.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center text-zinc-500 h-full min-h-[50vh] gap-4">
+                        <span class="text-6xl opacity-40">🧾</span>
+                        <p class="text-2xl font-black">No hay cuentas pendientes.</p>
+                        <p class="text-sm font-medium">Todas las mesas han pagado.</p>
+                    </div>`;
+                return;
+            }
+
+            const tables = {};
+            activeOrders.forEach(o => {
+                // Inferimos la mesa de 'detalles'
+                let mesaNum = 'Mostrador';
+                if (o.detalles) {
+                    const match = o.detalles.match(/Mesa:\s*([^\s|]+)/i);
+                    if (match) mesaNum = match[1];
+                }
+                
+                if (!tables[mesaNum]) {
+                    tables[mesaNum] = { orders: [], total: 0, items: [] };
+                }
+                tables[mesaNum].orders.push(o);
+
+                if (o.pedido) {
+                    const rawItems = o.pedido.split(/\\n|\\r\\n|\n/);
+                    rawItems.forEach(i => {
+                        if (i.trim() !== '') tables[mesaNum].items.push(i.trim());
+                    });
+                }
+
+                if (o.total) {
+                    const t = parseFloat(String(o.total).replace(/[^0-9.-]+/g, ''));
+                    if (!isNaN(t)) tables[mesaNum].total += t;
+                }
+            });
+
+            let html = '';
+            for (const [mesa, data] of Object.entries(tables)) {
+                const itemsHtml = data.items.map(item => {
+                    const match = item.match(/^(\\d+x|\\d+ x)(.*)/i);
+                    if (match) {
+                        return \`<li class="flex items-start gap-2 text-[13px] border-b border-white/5 py-1.5"><span class="text-amber-500 font-bold">\${match[1]}</span> <span class="text-zinc-300 font-medium">\${match[2]}</span></li>\`;
+                    }
+                    return \`<li class="text-[13px] text-zinc-300 font-medium border-b border-white/5 py-1.5">\${item}</li>\`;
+                }).join('');
+
+                const tableNameDisplay = (mesa.toLowerCase() === 'mostrador') ? mesa : 'Mesa ' + mesa;
+
+                html += \`
+                <div class="bg-dark-800 rounded-2xl border border-white/5 shadow-lg flex flex-col relative overflow-hidden flex-shrink-0 max-h-full">
+                    <div class="bg-amber-900/40 border-b border-amber-500/20 px-5 py-4 flex justify-between items-center shrink-0">
+                        <span class="text-amber-400 font-black text-xl tracking-tight">\${tableNameDisplay}</span>
+                        <span class="text-[10px] bg-amber-500/20 text-amber-400 font-bold px-2 py-1 rounded-md uppercase tracking-wider">\${data.orders.length} Ticket(s)</span>
+                    </div>
+                    
+                    <div class="px-5 py-2 flex-1 overflow-y-auto bg-dark-800" style="-webkit-overflow-scrolling: touch;">
+                        <ul class="flex flex-col">\${itemsHtml}</ul>
+                    </div>
+                    
+                    <div class="p-5 bg-dark-900 mt-auto border-t border-white/5 shrink-0">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-zinc-400 font-bold text-sm uppercase tracking-widest">Total Mesa</span>
+                            <span class="text-3xl font-black text-white">$\${data.total.toFixed(2)}</span>
+                        </div>
+                        <button onclick="checkoutTable('\${mesa.replace(/'/g, "\\\\'")}', this)" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] transition-all text-white font-black text-[17px] rounded-xl shadow-[0_4px_15px_rgba(16,185,129,0.3)] border-b-[4px] border-emerald-800 outline-none flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span>💸 COBRAR</span>
+                        </button>
+                    </div>
+                </div>\`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        async function checkoutTable(mesaNum, btnElement) {
+            if (btnElement) {
+                btnElement.disabled = true;
+                btnElement.innerHTML = '<span>⏳ Cerrando...</span>';
+            }
+
+            // Cambiar pago a PAGADO de forma optimista
+            const tableOrders = ordersData.filter(o => {
+                if (o.pago !== 'SIN_PAGAR') return false;
+                let currentMesa = 'Mostrador';
+                if (o.detalles) {
+                    const match = o.detalles.match(/Mesa:\s*([^\s|]+)/i);
+                    if (match) currentMesa = match[1];
+                }
+                return currentMesa === mesaNum;
+            });
+            
+            tableOrders.forEach(o => o.pago = 'PAGADO');
+
+            try {
+                // Se envía el POST al backend para cambiar la celda google sheets
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: "pay_table", mesa: mesaNum })
+                });
+                
+                const bell = document.getElementById('bellSound');
+                if(bell) {
+                    bell.currentTime = 0;
+                    bell.play().catch(() => {});
+                }
+                
+                // Actualizamos la vista quitando esa mesa de la caja
+                renderCuentas(ordersData);
+            } catch (error) {
+                console.error("Error al cobrar mesa:", error);
+                if (btnElement) {
+                    btnElement.disabled = false;
+                    btnElement.innerHTML = '<span>💸 COBRAR</span>';
+                }
+            }
         }
 
     </script>
