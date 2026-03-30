@@ -161,6 +161,10 @@
                 <div class="flex-1"></div>
 
                 <div class="flex items-center gap-2">
+                    <button onclick="openAgotadosModal()" title="Agotados"
+                        class="flex items-center justify-center px-4 h-11 bg-red-500/20 text-red-500 rounded-xl active:scale-95 transition-all outline-none hover:bg-red-500/30 font-bold border border-red-500/30 gap-2 whitespace-nowrap">
+                        <span>🛑</span> Agotados
+                    </button>
                     <button onclick="openCuentasModal()" title="Caja / Mesas"
                         class="flex items-center justify-center px-4 h-11 bg-amber-500/20 text-amber-500 rounded-xl active:scale-95 transition-all outline-none hover:bg-amber-500/30 font-bold border border-amber-500/30 gap-2 whitespace-nowrap">
                         <span>💳</span> Caja / Mesas
@@ -349,6 +353,52 @@
 
             <div id="cuentasList" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pr-2 pb-6">
                 <!-- Cuentas renderizadas dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ MODAL AGOTADOS ═══ -->
+    <div id="agotadosModal"
+        class="fixed inset-0 z-[250] hidden items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="bg-dark-900 border border-white/10 rounded-3xl p-6 max-w-lg w-full flex flex-col shadow-2xl relative transform transition-all scale-95 opacity-0 duration-300"
+            id="agotadosCard">
+            <button onclick="closeAgotadosModal()"
+                class="absolute top-5 right-5 text-zinc-500 hover:text-white transition-colors z-20 outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="mb-6 relative z-10 flex items-center gap-4">
+                <span class="text-4xl">🛑</span>
+                <div>
+                    <h2 class="text-2xl font-black text-white tracking-tight">Gestión de Inventario</h2>
+                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-widest mt-1">Marcar Platillos Agotados</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-3 overflow-y-auto max-h-[60vh]">
+                <div class="bg-dark-800 rounded-xl px-5 py-4 border border-white/5 flex justify-between items-center">
+                    <span class="text-white font-bold text-lg leading-tight">Agua de Horchata</span>
+                    <button onclick="toggleStock('Agua de Horchata', this)" data-status="activo" class="px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95">Activo ✅</button>
+                </div>
+                <div class="bg-dark-800 rounded-xl px-5 py-4 border border-white/5 flex justify-between items-center">
+                    <span class="text-white font-bold text-lg leading-tight">Carne Asada Plate</span>
+                    <button onclick="toggleStock('Carne Asada Plate', this)" data-status="activo" class="px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95">Activo ✅</button>
+                </div>
+                <div class="bg-dark-800 rounded-xl px-5 py-4 border border-white/5 flex justify-between items-center">
+                    <span class="text-white font-bold text-lg leading-tight">Tacos Dorados</span>
+                    <button onclick="toggleStock('Tacos Dorados', this)" data-status="activo" class="px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95">Activo ✅</button>
+                </div>
+                <div class="bg-dark-800 rounded-xl px-5 py-4 border border-white/5 flex justify-between items-center">
+                    <span class="text-white font-bold text-lg leading-tight">Chilaquiles Verdes</span>
+                    <button onclick="toggleStock('Chilaquiles Verdes', this)" data-status="activo" class="px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95">Activo ✅</button>
+                </div>
+                <div class="bg-dark-800 rounded-xl px-5 py-4 border border-white/5 flex justify-between items-center">
+                    <span class="text-white font-bold text-lg leading-tight">Cubana Torta</span>
+                    <button onclick="toggleStock('Cubana Torta', this)" data-status="activo" class="px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95">Activo ✅</button>
+                </div>
             </div>
         </div>
     </div>
@@ -671,6 +721,10 @@
             // FASE DE ACTUALIZACIÓN/CREACIÓN
             pendingOrders.forEach(order => {
                 const orderIdStr = String(order.id);
+                const isAssistance = (order.total == 0 || order.total === "$0.00" || String(order.total) === '0');
+                
+                const bgGeneralClass = isAssistance ? 'bg-blue-50' : 'bg-amber-50';
+
                 // Retiramos hasNewTicket de aquí para pasarlo abajo solo al crear
 
                 // Alertas de Productividad (Semáforo)
@@ -696,7 +750,7 @@
                 const existingTicket = document.getElementById('ticket-' + orderIdStr);
 
                 if (existingTicket) {
-                    existingTicket.className = `bg-amber-50 rounded-3xl flex flex-col overflow-hidden relative shadow-2xl ${borderClass}`;
+                    existingTicket.className = `${bgGeneralClass} rounded-3xl flex flex-col overflow-hidden relative shadow-2xl ${borderClass}`;
                     const oldBadge = existingTicket.querySelector('.badge-container');
                     if (oldBadge) oldBadge.remove();
                     if (badgeHtml !== '') existingTicket.insertAdjacentHTML('afterbegin', badgeHtml);
@@ -721,13 +775,19 @@
 
                     const ticket = document.createElement('div');
                     ticket.id = 'ticket-' + orderIdStr;
-                    ticket.className = `ticket-enter bg-amber-50 rounded-3xl flex flex-col overflow-hidden relative shadow-2xl ${borderClass}`;
+                    ticket.className = `ticket-enter ${bgGeneralClass} rounded-3xl flex flex-col overflow-hidden relative shadow-2xl ${borderClass}`;
+
+                    const headerBorderStr = isAssistance ? 'border-blue-500' : 'border-amber-600';
+                    const gradientStr = isAssistance ? 'from-blue-900 to-black' : 'from-zinc-900 to-black';
+                    const customerBgStr = isAssistance ? 'bg-blue-100/50' : 'bg-amber-100/50';
+                    const itemsBgStr = isAssistance ? 'bg-blue-50/50' : 'bg-amber-50/50';
+                    const customerTextStr = isAssistance ? 'text-blue-900/40' : 'text-amber-900/40';
 
                     ticket.innerHTML = `
                     ${badgeHtml}
                     <!-- Header -->
-                    <div class="bg-black px-6 py-4 text-white flex items-center justify-between border-b-[6px] border-amber-600 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-r from-zinc-900 to-black"></div>
+                    <div class="bg-black px-6 py-4 text-white flex items-center justify-between border-b-[6px] ${headerBorderStr} relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r ${gradientStr}"></div>
                         <div class="z-10 relative">
                             <span class="text-[11px] text-zinc-500 font-black uppercase tracking-widest block mb-0.5">Ticket ID</span>
                             <span class="text-2xl font-black text-white leading-none drop-shadow-[0_0_8px_rgba(255,255,255,0.7)]">#${order.id || 'N/A'}</span>
@@ -739,26 +799,32 @@
                     </div>
                     
                     <!-- Customer -->
-                    <div class="bg-amber-100/50 flex-none px-6 py-5 border-b border-amber-200/50">
-                        <p class="text-xs text-amber-900/40 font-black uppercase tracking-widest mb-1.5">Customer</p>
+                    <div class="${customerBgStr} flex-none px-6 py-5 border-b border-amber-200/50">
+                        <p class="text-xs ${customerTextStr} font-black uppercase tracking-widest mb-1.5">Customer</p>
                         <h3 class="text-3xl font-black text-zinc-900 tracking-tight leading-none">${order.cliente || order.nombre || 'Walk-in Guest'}</h3>
                         ${order.telefono || order.detalles ? `<p class="text-[10px] text-zinc-500 font-mono tracking-wider mt-1 truncate">📞 ${order.telefono || 'Sin Tel.'} • 📍 ${order.detalles ? order.detalles.split('| Notas:')[0] : 'Ubicación local'}</p>` : ''}
                         ${order.notas ? `<div class="mt-4 bg-red-50 text-red-700 px-5 py-3 rounded-2xl border-[3px] border-dotted border-red-500 text-sm font-black flex items-start gap-3 shadow-inner"><span class="text-red-500 animate-[pulse_1s_ease-in-out_infinite] block text-2xl leading-none">⚠️</span> <span class="text-base">${order.notas}</span></div>` : ''}
                     </div>
                     
                     <!-- Items -->
-                    <div class="p-6 flex-1 bg-amber-50/50">
+                    <div class="p-6 flex-1 ${itemsBgStr}">
                         <ul class="flex flex-col">${itemsHtml}</ul>
                     </div>
                     
                     <!-- Actions -->
-                    <div class="p-5 bg-amber-50 rounded-b-3xl mt-auto flex gap-3 pb-6 border-t border-amber-200/50">
+                    <div class="p-5 ${bgGeneralClass} rounded-b-3xl mt-auto flex gap-3 pb-6 border-t border-amber-200/50">
+                        ${isAssistance ? `
+                        <button onclick="completeOrder('${orderIdStr}')" class="w-full py-4 bg-blue-600 hover:bg-blue-500 active:scale-95 transition-all text-white font-black text-xl rounded-2xl shadow-md flex items-center justify-center gap-3 border-b-[5px] border-blue-800 outline-none">
+                            <span class="text-2xl leading-none">👍</span> <span>ATENDIDO</span>
+                        </button>
+                        ` : `
                         <button onclick="printOrder('${orderIdStr}')" class="bg-white hover:bg-zinc-100 text-zinc-800 px-6 py-4 rounded-2xl font-bold active:scale-95 transition-all flex items-center justify-center shadow-md border border-zinc-200 hover:shadow-lg outline-none">
                             <span class="text-2xl">🖨️</span>
                         </button>
                         <button onclick="completeOrder('${orderIdStr}')" class="flex-1 py-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all text-white font-black text-xl rounded-2xl shadow-[0_8px_20px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_25px_rgba(16,185,129,0.5)] flex items-center justify-center gap-3 border-b-[5px] border-emerald-700 hover:border-emerald-600 outline-none">
                             <span class="text-2xl leading-none">✅</span> <span>COMPLETAR</span>
                         </button>
+                        `}
                     </div>
                 `;
                     container.appendChild(ticket);
@@ -1071,7 +1137,7 @@ function closeCuentasModal() {
 
 function renderCuentas(orders) {
     const container = document.getElementById('cuentasList');
-    const activeOrders = orders.filter(o => o.pago === 'SIN_PAGAR');
+    const activeOrders = orders.filter(o => o.pago === 'SIN_PAGAR' && parseFloat(String(o.total).replace(/[^0-9.-]+/g, '')) > 0);
 
     if (activeOrders.length === 0) {
         container.innerHTML = `
@@ -1181,6 +1247,58 @@ async function checkoutTable(mesaNum, btnElement) {
             btnElement.disabled = false;
             btnElement.innerHTML = '<span>💸 COBRAR</span>';
         }
+    }
+}
+
+// --- MÓDULO AGOTADOS ---
+function openAgotadosModal() {
+    const modal = document.getElementById('agotadosModal');
+    const card = document.getElementById('agotadosCard');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    setTimeout(() => {
+        card.classList.remove('scale-95', 'opacity-0');
+        card.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closeAgotadosModal() {
+    const modal = document.getElementById('agotadosModal');
+    const card = document.getElementById('agotadosCard');
+    card.classList.remove('scale-100', 'opacity-100');
+    card.classList.add('scale-95', 'opacity-0');
+
+    setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+async function toggleStock(itemName, btnElement) {
+    const currentStatus = btnElement.getAttribute('data-status');
+    const newStatus = currentStatus === 'activo' ? 'agotado' : 'activo';
+    
+    // UI Optimista (se actualiza antes de que termine el fetch)
+    if (newStatus === 'agotado') {
+        btnElement.setAttribute('data-status', 'agotado');
+        btnElement.innerHTML = 'Agotado ❌';
+        btnElement.className = 'px-4 py-2 rounded-lg font-bold transition-all text-sm bg-red-500/20 text-red-500 border border-red-500/30 w-32 text-center outline-none active:scale-95';
+    } else {
+        btnElement.setAttribute('data-status', 'activo');
+        btnElement.innerHTML = 'Activo ✅';
+        btnElement.className = 'px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95';
+    }
+
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "update_stock", item: itemName, status: newStatus })
+        });
+    } catch (error) {
+        console.error("Error al actualizar inventario:", error);
     }
 }
     </script>
