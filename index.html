@@ -843,37 +843,61 @@
 
         function rebuildRecentDrawer(logData = []) {
             const list = document.getElementById('recentList');
-            const displayLog = logData.slice(0, 20);
+            const displayLog = logData.slice(0, 40); 
 
             if (displayLog.length === 0) {
                 list.innerHTML = '<div class="h-full flex flex-col items-center justify-center text-zinc-600 gap-3"><span class="text-3xl">🧹</span><p class="font-bold text-center">No recent orders.<br><span class="text-xs font-normal">Complete a ticket to see it here.</span></p></div>';
                 return;
             }
 
-            list.innerHTML = displayLog.map(order => {
-                const itemsCount = order.pedido ? order.pedido.split(/\\n|\\r\\n|\n/).filter(i => i.trim() !== '').length : 0;
-                const customerName = order.cliente || order.nombre || 'Invitado';
+            const groups = {};
+            displayLog.forEach(order => {
+                let dateKey = 'Fechas Anteriores';
+                try {
+                    const d = new Date(order.fecha);
+                    if (!isNaN(d.getTime())) {
+                        const today = new Date();
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        if (d.toDateString() === today.toDateString()) {
+                            dateKey = '📅 HOY';
+                        } else if (d.toDateString() === yesterday.toDateString()) {
+                            dateKey = '🕰️ AYER';
+                        } else {
+                            dateKey = d.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase();
+                        }
+                    }
+                } catch(e) {}
+                
+                if (!groups[dateKey]) groups[dateKey] = [];
+                groups[dateKey].push(order);
+            });
 
-                return `
-        <div class="bg-dark-900 p-4 rounded-2xl border border-white/10 flex flex-col gap-3 shadow-md shrink-0">
-            <div class="flex justify-between items-start">
-                <div class="flex flex-col">
-                    <span class="text-zinc-500 font-black uppercase tracking-widest text-[10px] mb-1">#${order.id}</span>
-                    <span class="text-white font-bold text-lg leading-none truncate w-44">${customerName}</span>
-                </div>
-                <span class="text-amber-500 font-mono text-xs font-bold bg-amber-500/10 px-2 py-1 rounded-md">${formatTicketTime(order.fecha)}</span>
-            </div>
-            
-            <div class="text-zinc-400 text-xs font-bold border-b border-white/5 pb-3">
-                🛒 ${itemsCount} artículo(s)
-            </div>
-            
-            <button onclick="restoreOrder('${order.id}')" class="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-red-400 py-3 rounded-xl font-bold text-sm transition-all outline-none flex justify-center items-center gap-2">
-                ↩️ Devolver a Cocina
-            </button>
-        </div>
-        `;
-            }).join('');
+            let html = '';
+            for (const [dateName, orders] of Object.entries(groups)) {
+                html += `<div class="sticky top-0 z-10 bg-zinc-950/95 backdrop-blur-md py-2 my-2 border-b border-white/5">
+                            <span class="text-amber-500 font-bold text-[11px] uppercase tracking-[0.2em]">${dateName}</span>
+                         </div>`;
+                html += orders.map(order => {
+                    const itemsCount = order.pedido ? order.pedido.split(/\\n|\\r\\n|\n/).filter(i => i.trim() !== '').length : 0;
+                    const customerName = order.cliente || order.nombre || 'Invitado';
+                    return `
+                    <div class="bg-dark-900 p-4 rounded-2xl border border-white/10 flex flex-col gap-3 shadow-md shrink-0 mb-3">
+                        <div class="flex justify-between items-start">
+                            <div class="flex flex-col">
+                                <span class="text-zinc-500 font-black uppercase tracking-widest text-[10px] mb-1">#${order.id}</span>
+                                <span class="text-white font-bold text-lg leading-none truncate w-44">${customerName}</span>
+                            </div>
+                            <span class="text-amber-500 font-mono text-xs font-bold bg-amber-500/10 px-2 py-1 rounded-md">${formatTicketTime(order.fecha)}</span>
+                        </div>
+                        <div class="text-zinc-400 text-xs font-bold border-b border-white/5 pb-3">🛒 ${itemsCount} artículo(s)</div>
+                        <button onclick="restoreOrder('${order.id}')" class="w-full bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-red-400 py-3 rounded-xl font-bold text-sm transition-all outline-none flex justify-center items-center gap-2">
+                            ↩️ Devolver a Cocina
+                        </button>
+                    </div>`;
+                }).join('');
+            }
+            list.innerHTML = html;
         }
 
         // --- FASE 2: IMPRESORAS TÉRMICAS (80MM / COURIER) ---
