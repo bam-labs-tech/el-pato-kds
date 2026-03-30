@@ -167,11 +167,11 @@
                 <div class="flex items-center gap-2">
                     <button onclick="openAgotadosModal()" title="Agotados"
                         class="bg-red-500/10 text-red-400 border border-red-500/20 font-bold px-4 py-2 rounded-xl transition-all outline-none active:scale-95 hover:bg-red-500/25 hover:border-red-500/40 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)]">
-                        🛑 Agotados
+                        🛑 86'd / Out of Stock
                     </button>
                     <button onclick="openCuentasModal()" title="Caja / Mesas"
                         class="flex items-center justify-center px-4 h-11 bg-amber-500/10 text-amber-400 rounded-xl active:scale-95 transition-all outline-none hover:bg-amber-500/25 hover:border-amber-500/40 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] font-bold border border-amber-500/20 gap-2 whitespace-nowrap">
-                        <span>💳</span> Caja / Mesas
+                        <span>💳</span> POS / Tables
                     </button>
                     <button onclick="generateZReport()" title="Corte de Caja"
                         class="flex items-center justify-center w-11 h-11 rounded-xl active:scale-95 transition-all outline-none hover:bg-zinc-800 text-zinc-400 hover:text-white text-[24px] font-bold leading-none">
@@ -206,7 +206,7 @@
             style="-webkit-overflow-scrolling: touch;">
             <div id="pullToRefresh"
                 class="absolute top-0 left-0 w-full flex justify-center items-center h-16 -mt-16 transition-opacity opacity-0 text-zinc-500 font-bold text-sm gap-2 z-0">
-                <span class="animate-spin text-xl">↻</span> Recargando...
+                <span class="animate-spin text-xl">↻</span> Reloading...
             </div>
             <div id="ticketsContainer"
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start pb-32 w-full relative z-10">
@@ -262,16 +262,15 @@
 
             <div class="text-center mb-6 relative z-10">
                 <span class="text-5xl block mb-2">📊</span>
-                <h2 class="text-2xl font-black text-white tracking-tight">Corte de Turno</h2>
-                <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Resumen de Hoy</p>
+                <h2 class="text-2xl font-black text-white tracking-tight">End of Day Report</h2>
+                <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Today's Summary</p>
             </div>
 
             <div class="flex flex-col gap-3 mb-8 relative z-10">
                 <!-- Barra 1: Hora Generada -->
                 <div
                     class="bg-dark-800 rounded-xl px-4 py-3 flex justify-center items-center border border-white/5 shadow-inner">
-                    <span id="zGenerationTime" class="text-zinc-400 text-sm font-medium tracking-wide">Generado a
-                        las: --:--</span>
+                    <span id="zGenerationTime" class="text-zinc-400 text-sm font-medium tracking-wide">Generated at: --:--</span>
                 </div>
 
                 <!-- Barra 2: Tickets -->
@@ -279,7 +278,7 @@
                     class="bg-dark-800 rounded-xl px-5 py-4 flex items-center justify-between border border-white/5 shadow-sm">
                     <div class="flex items-center gap-3">
                         <span class="text-2xl opacity-80">🎫</span>
-                        <span class="text-zinc-300 font-bold tracking-wide">Tickets Completados</span>
+                        <span class="text-zinc-300 font-bold tracking-wide">Completed Tickets</span>
                     </div>
                     <span class="text-3xl font-black text-white" id="zTicketsCount">0</span>
                 </div>
@@ -289,7 +288,7 @@
                     class="bg-dark-800 rounded-xl px-5 py-4 flex items-center justify-between border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
                     <div class="flex items-center gap-3">
                         <span class="text-2xl opacity-80">💰</span>
-                        <span class="text-zinc-300 font-bold tracking-wide">Ventas Totales</span>
+                        <span class="text-zinc-300 font-bold tracking-wide">Total Sales</span>
                     </div>
                     <span
                         class="text-3xl font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)] tracking-tight"
@@ -300,11 +299,11 @@
             <div class="flex flex-col gap-3 relative z-10">
                 <button onclick="endShift()"
                     class="w-full py-4 bg-gradient-to-b from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:scale-[0.97] transition-all text-white font-black text-lg rounded-2xl shadow-[0_0_25px_rgba(220,38,38,0.4)] border-b-4 border-red-900 flex justify-center items-center gap-2 hover:shadow-[0_0_30px_rgba(220,38,38,0.6)]">
-                    <span>FINALIZAR TURNO</span>
+                    <span>END SHIFT</span>
                 </button>
                 <button onclick="closeZReport()"
                     class="w-full py-3.5 bg-transparent hover:bg-white/[0.06] active:scale-[0.97] transition-all text-zinc-400 hover:text-white font-bold text-sm rounded-2xl border border-white/[0.08] hover:border-white/15">
-                    Volver / Cerrar
+                    Back / Close
                 </button>
             </div>
         </div>
@@ -316,17 +315,16 @@
         <div class="bg-dark-900 border border-white/[0.08] rounded-3xl p-8 max-w-sm w-full text-center shadow-[0_25px_60px_-12px_rgba(0,0,0,0.7)] transform scale-95 transition-transform duration-300 backdrop-blur-xl"
             id="confirmShiftCard">
             <div class="text-6xl mb-4 animate-pulse">⚠️</div>
-            <h3 class="text-2xl font-black text-white mb-2">¿Finalizar Turno?</h3>
-            <p class="text-zinc-400 text-sm mb-8">Esto borrará el historial de tickets en esta pantalla para empezar
-                un nuevo día.</p>
+            <h3 class="text-2xl font-black text-white mb-2">End Shift?</h3>
+            <p class="text-zinc-400 text-sm mb-8">This will clear the local history to start a new day.</p>
             <div class="flex gap-3">
                 <button onclick="cancelEndShift()"
                     class="flex-1 py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-white/[0.08] active:scale-[0.97] transition-all outline-none hover:border-white/15">
-                    Cancelar
+                    Cancel
                 </button>
                 <button onclick="executeEndShift()"
                     class="flex-1 py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl shadow-[0_0_15px_rgba(220,38,38,0.4)] border-b-4 border-red-800 active:scale-95 transition-all outline-none">
-                    Sí, Limpiar
+                    Yes, Clear History
                 </button>
             </div>
         </div>
@@ -350,8 +348,8 @@
             <div class="mb-6 relative z-10 flex items-center gap-4">
                 <span class="text-4xl text-amber-500">💳</span>
                 <div>
-                    <h2 class="text-2xl font-black text-white tracking-tight">Caja / Mesas</h2>
-                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-widest mt-1">Punto de Venta</p>
+                    <h2 class="text-2xl font-black text-white tracking-tight">POS / Tables</h2>
+                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-widest mt-1">Point of Sale</p>
                 </div>
             </div>
 
@@ -378,8 +376,8 @@
             <div class="mb-6 relative z-10 flex items-center gap-4">
                 <span class="text-4xl">🛑</span>
                 <div>
-                    <h2 class="text-2xl font-black text-white tracking-tight">Gestión de Inventario</h2>
-                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-widest mt-1">Marcar Platillos Agotados
+                    <h2 class="text-2xl font-black text-white tracking-tight">Inventory Management</h2>
+                    <p class="text-zinc-500 text-sm font-bold uppercase tracking-widest mt-1">Manage Out of Stock Items
                     </p>
                 </div>
             </div>
@@ -388,7 +386,7 @@
                 <div class="bg-dark-800 rounded-xl px-5 py-4 border border-white/5 flex justify-between items-center">
                     <span class="text-white font-bold text-lg leading-tight">Agua de Horchata</span>
                     <button onclick="toggleStock('Agua de Horchata', this)" data-status="activo"
-                        class="px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95">Activo
+                        class="px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95">In Stock
                         ✅</button>
                 </div>
                 <div class="bg-dark-800 rounded-xl px-5 py-4 border border-white/5 flex justify-between items-center">
@@ -477,7 +475,7 @@
 
             const now = new Date();
             const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-            document.getElementById('zGenerationTime').innerText = `Generado a las: ${timeString}`;
+            document.getElementById('zGenerationTime').innerText = `Generated at: ${timeString}`;
 
             // Mostrar el Modal y Animar (Tailwind)
             const modal = document.getElementById('zReportModal');
@@ -835,7 +833,7 @@
                             <span class="text-2xl">🖨️</span>
                         </button>
                         <button onclick="completeOrder('${orderIdStr}')" class="flex-1 py-4 bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 active:scale-[0.97] transition-all text-white font-black text-xl rounded-2xl shadow-[0_8px_25px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_30px_rgba(16,185,129,0.5)] flex items-center justify-center gap-3 border-b-[5px] border-emerald-700 hover:border-emerald-600 outline-none">
-                            <span class="text-2xl leading-none">✅</span> <span>COMPLETAR</span>
+                            <span class="text-2xl leading-none">✅</span> <span>COMPLETE</span>
                         </button>
                     </div>
                 `;
@@ -930,7 +928,7 @@
 
             const groups = {};
             displayLog.forEach(order => {
-                let dateKey = 'Fechas Anteriores';
+                let dateKey = 'PAST DATES';
                 try {
                     const d = new Date(order.fecha);
                     if (!isNaN(d.getTime())) {
@@ -938,9 +936,9 @@
                         const yesterday = new Date();
                         yesterday.setDate(yesterday.getDate() - 1);
                         if (d.toDateString() === today.toDateString()) {
-                            dateKey = '📅 HOY';
+                            dateKey = '📅 TODAY';
                         } else if (d.toDateString() === yesterday.toDateString()) {
-                            dateKey = '🕰️ AYER';
+                            dateKey = '🕰️ YESTERDAY';
                         } else {
                             dateKey = d.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase();
                         }
@@ -958,7 +956,7 @@
                          </div>`;
                 html += orders.map(order => {
                     const itemsCount = order.pedido ? order.pedido.split(/\\n|\\r\\n|\n/).filter(i => i.trim() !== '').length : 0;
-                    const customerName = order.cliente || order.nombre || 'Invitado';
+                    const customerName = order.cliente || order.nombre || 'Guest';
                     return `
                     <div class="bg-dark-900/80 p-4 rounded-2xl border border-white/[0.08] flex flex-col gap-3 shadow-[0_8px_25px_rgba(0,0,0,0.4)] shrink-0 mb-3 backdrop-blur-sm">
                         <div class="flex justify-between items-start">
@@ -968,9 +966,9 @@
                             </div>
                             <span class="text-amber-500 font-mono text-xs font-bold bg-amber-500/10 px-2 py-1 rounded-md">${formatTicketTime(order.fecha)}</span>
                         </div>
-                        <div class="text-zinc-400 text-xs font-bold border-b border-white/5 pb-3">🛒 ${itemsCount} artículo(s)</div>
+                        <div class="text-zinc-400 text-xs font-bold border-b border-white/5 pb-3">🛒 ${itemsCount} item(s)</div>
                         <button onclick="restoreOrder('${order.id}')" class="w-full bg-zinc-800/80 hover:bg-zinc-700 active:scale-[0.97] text-red-400 py-3 rounded-xl font-bold text-sm transition-all outline-none flex justify-center items-center gap-2 border border-white/[0.05] hover:border-red-500/20 hover:shadow-[0_0_15px_rgba(239,68,68,0.1)]">
-                            ↩️ Devolver a Cocina
+                            ↩️ Return to Kitchen
                         </button>
                     </div>`;
                 }).join('');
@@ -1111,7 +1109,7 @@
 
                 if (pullDistance > 65 && mainEl.scrollTop === 0) {
                     // Acción superó el umbral, procedemos a recargar
-                    ptrIndicator.innerHTML = '<span class="animate-spin text-xl text-amber-500">↻</span> Actualizando KDS...';
+                    ptrIndicator.innerHTML = '<span class="animate-spin text-xl text-amber-500">↻</span> Reloading...';
                     window.location.reload();
                 } else {
                     // No superó el umbral, revertir
@@ -1155,8 +1153,8 @@
                 container.innerHTML = `
             <div class="col-span-full flex flex-col items-center justify-center text-zinc-500 h-full min-h-[50vh] gap-4">
                 <span class="text-6xl opacity-40">🧾</span>
-                <p class="text-2xl font-black">No hay cuentas pendientes.</p>
-                <p class="text-sm font-medium">Todas las mesas han pagado.</p>
+                <p class="text-2xl font-black">No pending tabs.</p>
+                <p class="text-sm font-medium">All tables are cleared.</p>
             </div>`;
                 return;
             }
@@ -1210,15 +1208,15 @@
             </div>
             <div class="p-5 bg-dark-900/80 mt-auto border-t border-white/[0.06] shrink-0">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-zinc-400 font-bold text-sm uppercase tracking-widest">Total Mesa</span>
+                    <span class="text-zinc-400 font-bold text-sm uppercase tracking-widest">Table Total</span>
                     <span class="text-3xl font-black text-white">$${data.total.toFixed(2)}</span>
                 </div>
                 <div class="flex gap-2 w-full">
                     <button onclick="printTableReceipt('${mesa.replace(/'/g, "\\'")}')" class="bg-zinc-800/90 hover:bg-zinc-700 active:scale-[0.97] transition-all text-white font-bold py-4 px-4 rounded-xl border-b-[4px] border-zinc-900 shadow-[0_4px_15px_rgba(0,0,0,0.3)] outline-none flex justify-center items-center flex-shrink-0 border border-white/[0.05] hover:border-white/10 hover:shadow-[0_6px_20px_rgba(0,0,0,0.4)]">
-                        🖨️ Cuenta
+                        🖨️ Print Receipt
                     </button>
                     <button onclick="checkoutTable('${mesa.replace(/'/g, "\\'")}', this)" class="flex-1 py-4 bg-gradient-to-b from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 active:scale-[0.97] transition-all text-white font-black text-[17px] rounded-xl shadow-[0_4px_20px_rgba(16,185,129,0.3)] border-b-[4px] border-emerald-800 outline-none flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[0_8px_25px_rgba(16,185,129,0.45)]">
-                        <span>💸 COBRAR</span>
+                        <span>💸 CHECKOUT</span>
                     </button>
                 </div>
             </div>
@@ -1230,7 +1228,7 @@
         async function checkoutTable(mesaNum, btnElement) {
             if (btnElement) {
                 btnElement.disabled = true;
-                btnElement.innerHTML = '<span>⏳ Cerrando...</span>';
+                btnElement.innerHTML = '<span>⏳ Closing...</span>';
             }
 
             try {
@@ -1262,7 +1260,7 @@
                 console.error("Error al cobrar mesa:", error);
                 if (btnElement) {
                     btnElement.disabled = false;
-                    btnElement.innerHTML = '<span>💸 COBRAR</span>';
+                    btnElement.innerHTML = '<span>💸 CHECKOUT</span>';
                 }
             }
         }
@@ -1329,16 +1327,16 @@
             printFrame.innerHTML = `
         <div style="text-align: center; margin-bottom: 20px; padding-top: 10px;">
             <h1 style="font-size: 36px; margin: 0; font-weight: 900; letter-spacing: -2px;">EL PATO</h1>
-            <p style="font-size: 14px; margin: 5px 0 0 0; text-transform: uppercase; font-weight: bold;">Ticket de Consumo</p>
+            <p style="font-size: 14px; margin: 5px 0 0 0; text-transform: uppercase; font-weight: bold;">Customer Receipt</p>
         </div>
         
         <hr style="border-top: 3px solid #000; margin: 15px 0;">
         
         <div style="display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 5px; font-weight: bold;">
-            <span>Lugar:</span> <span style="text-transform: uppercase;">${displayMesa}</span>
+            <span>Location:</span> <span style="text-transform: uppercase;">${displayMesa}</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: bold;">
-            <span>Fecha/Hora:</span> <span>${dateStr} ${timeStr}</span>
+            <span>Date/Time:</span> <span>${dateStr} ${timeStr}</span>
         </div>
         
         <hr style="border-top: 3px solid #000; margin: 20px 0;">
@@ -1355,8 +1353,8 @@
         </div>
         
         <div style="text-align: center; margin-top: 40px; font-size: 16px; padding-bottom: 20px; font-weight: bold; line-height: 1.5;">
-            ¡Gracias por su visita!<br>
-            *** VUELVA PRONTO ***
+            Thank you for your visit!<br>
+            *** PLEASE COME AGAIN ***
         </div>
     `;
 
@@ -1408,11 +1406,11 @@
             // UI Optimista (se actualiza antes de que termine el fetch)
             if (newStatus === 'agotado') {
                 btnElement.setAttribute('data-status', 'agotado');
-                btnElement.innerHTML = 'Agotado ❌';
+                btnElement.innerHTML = 'Sold Out ❌';
                 btnElement.className = 'px-4 py-2 rounded-lg font-bold transition-all text-sm bg-red-500/20 text-red-500 border border-red-500/30 w-32 text-center outline-none active:scale-95';
             } else {
                 btnElement.setAttribute('data-status', 'activo');
-                btnElement.innerHTML = 'Activo ✅';
+                btnElement.innerHTML = 'In Stock ✅';
                 btnElement.className = 'px-4 py-2 rounded-lg font-bold transition-all text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-32 text-center outline-none active:scale-95';
             }
 
