@@ -70,8 +70,12 @@
                 padding: 0 !important;
             }
 
-            #loginScreen,
-            #kdsApp {
+#loginScreen,
+            #kdsApp,
+            #cuentasModal,
+            #agotadosModal,
+            #zReportModal,
+            #confirmShiftModal {
                 display: none !important;
             }
 
@@ -721,9 +725,8 @@
             // FASE DE ACTUALIZACIÓN/CREACIÓN
             pendingOrders.forEach(order => {
                 const orderIdStr = String(order.id);
-                const isAssistance = (order.total == 0 || order.total === "$0.00" || String(order.total) === '0');
                 
-                const bgGeneralClass = isAssistance ? 'bg-blue-50' : 'bg-amber-50';
+                const bgGeneralClass = 'bg-amber-50';
 
                 // Retiramos hasNewTicket de aquí para pasarlo abajo solo al crear
 
@@ -777,11 +780,11 @@
                     ticket.id = 'ticket-' + orderIdStr;
                     ticket.className = `ticket-enter ${bgGeneralClass} rounded-3xl flex flex-col overflow-hidden relative shadow-2xl ${borderClass}`;
 
-                    const headerBorderStr = isAssistance ? 'border-blue-500' : 'border-amber-600';
-                    const gradientStr = isAssistance ? 'from-blue-900 to-black' : 'from-zinc-900 to-black';
-                    const customerBgStr = isAssistance ? 'bg-blue-100/50' : 'bg-amber-100/50';
-                    const itemsBgStr = isAssistance ? 'bg-blue-50/50' : 'bg-amber-50/50';
-                    const customerTextStr = isAssistance ? 'text-blue-900/40' : 'text-amber-900/40';
+                    const headerBorderStr = 'border-amber-600';
+                    const gradientStr = 'from-zinc-900 to-black';
+                    const customerBgStr = 'bg-amber-100/50';
+                    const itemsBgStr = 'bg-amber-50/50';
+                    const customerTextStr = 'text-amber-900/40';
 
                     ticket.innerHTML = `
                     ${badgeHtml}
@@ -813,18 +816,12 @@
                     
                     <!-- Actions -->
                     <div class="p-5 ${bgGeneralClass} rounded-b-3xl mt-auto flex gap-3 pb-6 border-t border-amber-200/50">
-                        ${isAssistance ? `
-                        <button onclick="completeOrder('${orderIdStr}')" class="w-full py-4 bg-blue-600 hover:bg-blue-500 active:scale-95 transition-all text-white font-black text-xl rounded-2xl shadow-md flex items-center justify-center gap-3 border-b-[5px] border-blue-800 outline-none">
-                            <span class="text-2xl leading-none">👍</span> <span>ATENDIDO</span>
-                        </button>
-                        ` : `
                         <button onclick="printOrder('${orderIdStr}')" class="bg-white hover:bg-zinc-100 text-zinc-800 px-6 py-4 rounded-2xl font-bold active:scale-95 transition-all flex items-center justify-center shadow-md border border-zinc-200 hover:shadow-lg outline-none">
                             <span class="text-2xl">🖨️</span>
                         </button>
                         <button onclick="completeOrder('${orderIdStr}')" class="flex-1 py-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all text-white font-black text-xl rounded-2xl shadow-[0_8px_20px_rgba(16,185,129,0.4)] hover:shadow-[0_12px_25px_rgba(16,185,129,0.5)] flex items-center justify-center gap-3 border-b-[5px] border-emerald-700 hover:border-emerald-600 outline-none">
                             <span class="text-2xl leading-none">✅</span> <span>COMPLETAR</span>
                         </button>
-                        `}
                     </div>
                 `;
                     container.appendChild(ticket);
@@ -1201,9 +1198,14 @@ function renderCuentas(orders) {
                     <span class="text-zinc-400 font-bold text-sm uppercase tracking-widest">Total Mesa</span>
                     <span class="text-3xl font-black text-white">$${data.total.toFixed(2)}</span>
                 </div>
-                <button onclick="checkoutTable('${mesa.replace(/'/g, "\\'")}', this)" class="w-full py-4 bg-emerald-600 hover:bg-emerald-400 active:scale-[0.98] transition-all text-white font-black text-[17px] rounded-xl shadow-[0_4px_15px_rgba(16,185,129,0.3)] border-b-[4px] border-emerald-800 outline-none flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span>💸 COBRAR</span>
-                </button>
+                <div class="flex gap-2 w-full">
+                    <button onclick="printTableReceipt('${mesa.replace(/'/g, "\\'")}')" class="bg-zinc-800 hover:bg-zinc-700 active:scale-[0.98] transition-all text-white font-bold py-4 px-4 rounded-xl border-b-[4px] border-zinc-900 shadow-[0_4px_10px_rgba(0,0,0,0.3)] outline-none flex justify-center items-center flex-shrink-0">
+                        🖨️ Cuenta
+                    </button>
+                    <button onclick="checkoutTable('${mesa.replace(/'/g, "\\'")}', this)" class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-400 active:scale-[0.98] transition-all text-white font-black text-[17px] rounded-xl shadow-[0_4px_15px_rgba(16,185,129,0.3)] border-b-[4px] border-emerald-800 outline-none flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span>💸 COBRAR</span>
+                    </button>
+                </div>
             </div>
         </div>`;
     }
@@ -1248,6 +1250,114 @@ async function checkoutTable(mesaNum, btnElement) {
             btnElement.innerHTML = '<span>💸 COBRAR</span>';
         }
     }
+}
+
+function printTableReceipt(targetMesa) {
+    const activeOrders = ordersData.filter(o => {
+        if (o.pago !== 'SIN_PAGAR') return false;
+        
+        const totalNum = parseFloat(String(o.total || '0').replace(/[^0-9.-]+/g, ''));
+        if (isNaN(totalNum) || totalNum <= 0) return false;
+
+        let m = 'Mostrador';
+        if (o.detalles) {
+            const match = o.detalles.match(/Mesa:\s*([^\s|]+)/i);
+            if (match) m = match[1];
+        }
+        return m === targetMesa;
+    });
+
+    if (activeOrders.length === 0) return;
+
+    let items = [];
+    let total = 0;
+
+    activeOrders.forEach(o => {
+        if (o.pedido) {
+            const rawItems = o.pedido.split(/\\n|\\r\\n|\n/);
+            rawItems.forEach(i => {
+                if (i.trim() !== '') items.push(i.trim());
+            });
+        }
+        if (o.total) {
+            const t = parseFloat(String(o.total).replace(/[^0-9.-]+/g, ''));
+            if (!isNaN(t)) total += t;
+        }
+    });
+
+    let oldFrame = document.getElementById('printFrame');
+    if (oldFrame) oldFrame.remove();
+
+    const printItemsHtml = items.map(item => {
+        const cleanItem = item.trim();
+        const match = cleanItem.match(/^(\d+x|\d+ x)(.*)/i);
+        if (match) {
+            return `<li style="padding: 10px 0; border-bottom: 2px dashed #000; display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="font-size: 24px; font-weight: 900;">${match[1]}</span>
+                        <span style="font-size: 18px; font-weight: bold; line-height: 1.2;">${match[2]}</span>
+                    </li>`;
+        }
+        return `<li style="padding: 10px 0; border-bottom: 2px dashed #000; font-size: 18px; font-weight: bold;">${cleanItem}</li>`;
+    }).join('');
+
+    const displayMesa = (targetMesa.toLowerCase() === 'mostrador') ? 'Mostrador' : 'Mesa ' + targetMesa;
+    const printFrame = document.createElement('div');
+    printFrame.id = 'printFrame';
+    
+    let firstOrderDate = 'Just now';
+    if (activeOrders.length > 0 && activeOrders[0].fecha) {
+        firstOrderDate = formatTicketTime(activeOrders[0].fecha);
+    }
+
+    printFrame.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px; padding-top: 10px;">
+            <h1 style="font-size: 36px; margin: 0; font-weight: 900; letter-spacing: -2px;">EL PATO</h1>
+            <p style="font-size: 14px; margin: 5px 0 0 0; text-transform: uppercase; font-weight: bold;">Ticket de Mesa</p>
+        </div>
+        
+        <hr style="border-top: 3px solid #000; margin: 15px 0;">
+        
+        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: bold;">
+            <span>Time:</span> <span>${firstOrderDate}</span>
+        </div>
+        
+        <div style="border: 4px solid #000; padding: 15px 10px; margin: 20px 0; text-align: center;">
+            <p style="font-size: 14px; text-transform: uppercase; margin: 0 0 8px 0; font-weight: bold;">Customer / Cliente</p>
+            <h2 style="font-size: 28px; font-weight: 900; margin: 0; line-height: 1.1; text-transform: uppercase;">${displayMesa}</h2>
+        </div>
+        
+        <hr style="border-top: 3px solid #000; margin: 20px 0;">
+        
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            ${printItemsHtml}
+        </ul>
+
+        <hr style="border-top: 3px solid #000; margin: 20px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 24px; font-weight: 900; padding: 5px 0;">
+            <span>TOTAL:</span>
+            <span>$${total.toFixed(2)}</span>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; font-size: 16px; padding-bottom: 20px; font-weight: bold;">
+            ¡Gracias por su visita!<br>
+            *** END OF TICKET ***
+        </div>
+    `;
+
+    document.body.appendChild(printFrame);
+
+    setTimeout(() => {
+        window.print();
+        window.onafterprint = function () {
+            const frameToRemove = document.getElementById('printFrame');
+            if (frameToRemove) frameToRemove.remove();
+            window.onafterprint = null;
+        };
+        setTimeout(() => {
+            const frameToRemove = document.getElementById('printFrame');
+            if (frameToRemove) frameToRemove.remove();
+        }, 3000);
+    }, 300);
 }
 
 // --- MÓDULO AGOTADOS ---
